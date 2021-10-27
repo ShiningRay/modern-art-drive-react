@@ -1,0 +1,28 @@
+.cm-message-container {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  z-index: 9999;
+  transform: translate(-50%, 0);
+
+  .cm-message {
+    margin: 5px;
+    padding: 6px 12px;
+    border: var(--primary-color) solid 2px;
+    border-radius: 3px;
+    background-color: var(--primary-color-p10);
+    color: var(--primary-color);
+    animation: cmmessageshow 0.15s ease;
+  }
+}
+
+@keyframes cmmessageshow {
+  0% {
+    transform: translate(0, -100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(0, 0);
+    opacity: 1;
+  }
+}

@@ -1,0 +1,70 @@
+$amargin: 36px;
+$logoheight: 50px;
+
+header {
+  padding: 32px 0;
+
+  .container {
+    display: flex;
+    align-items: center;
+
+    .menu {
+      flex-grow: 1;
+      flex-shrink: 1;
+      width: 50%;
+
+      a {
+        font-size: 16px;
+        margin-right: 12px;
+
+        &:last-child {
+          margin-right: 0;
+        }
+      }
+    }
+    .logo {
+      flex-grow: 0;
+      flex-shrink: 0;
+    }
+    .opt {
+      flex-grow: 1;
+      flex-shrink: 1;
+      width: 50%;
+      text-align: right;
+
+      a {
+        padding: 10px 40px;
+        border-radius: 20px;
+        cursor: pointer;
+        text-decoration: none;
+        color: var(--main-text);
+      }
+
+      .learn {
+        background-color: #25282A;
+        color: #fff;
+        margin-right: 30px;
+      }
+      .connect {
+        background-color: #D6D2C4;
+        color: #000;
+      }
+    }
+  }
+
+  .logo {
+    height: $logoheight;
+  }
+}
+
+footer {
+  background-color: #333;
+  color: rgba($color: #fff, $alpha: 0.7);
+  font-size: 12px;
+  text-align: center;
+  padding: 12px 0;
+}
+
+@media screen and (max-width: 600px) {
+  @import './style.m.scss';
+}

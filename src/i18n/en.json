@@ -1,0 +1,15 @@
+{
+  "trans": {
+    "header": {
+      "market": "Market Place",
+      "community": "Community",
+      "create": "Create Media",
+      "learn": "Learn",
+      "connect": "Connect"
+    },
+    "market": {
+      "title": "Market\nPlace"
+    },
+    "footer": "copyright © modern art drive"
+  }
+}

@@ -1,0 +1,10 @@
+.common-activeable-a {
+  cursor: pointer;
+  text-decoration: none;
+  color: var(--main-text);
+
+  &.active {
+    font-family: 'Chronicle Display';
+    text-decoration: line-through;
+  }
+}

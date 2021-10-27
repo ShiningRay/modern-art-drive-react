@@ -1,0 +1,14 @@
+$primaryColor: #fff;
+$primaryColorP75: rgba($primaryColor, 0.75);
+$primaryColorP50: rgba($primaryColor, 0.5);
+$primaryColorP25: rgba($primaryColor, 0.25);
+$primaryColorP10: rgba($primaryColor, 0.1);
+
+:root {
+  --primary-color: #{$primaryColor};
+  --primary-color-p75: #{$primaryColorP75};
+  --primary-color-p50: #{$primaryColorP50};
+  --primary-color-p25: #{$primaryColorP25};
+  --primary-color-p10: #{$primaryColorP10};
+  --main-text: #25282A;
+}
