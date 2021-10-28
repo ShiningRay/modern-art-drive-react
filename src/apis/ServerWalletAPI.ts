@@ -2,26 +2,23 @@
 import { SERVER_URL } from '../constants'
 import axios, { AxiosInstance } from 'axios'
 
-interface ApiData<T> {
-  success: boolean
-  data: T
-}
-
-export interface ProjectData {
-  id: number
-  key: string
-  name: string
-  name_en: string
-  image: string
-  article: string
-}
-
-export interface ResearchData {
-  id: number
-  title: string
-  desc: string
-  image: string
-  link: string
+export interface NftData {
+  tokenId: string
+  classId: string
+  tid: number
+  lock: {
+    args: string
+    codeHash: string
+    hashType: string
+  }
+  characteristic: {
+    rarity: number
+  }
+  address: string
+  outPoint: {
+    txHash: string
+    index: string
+  }
 }
 
 export class ServerWalletAPI {
@@ -31,18 +28,14 @@ export class ServerWalletAPI {
     this.axios = axios.create({ baseURL: SERVER_URL })
   }
 
-  async getProjectDetail(name: string): Promise<ProjectData> {
-    const url = `/api/v1/projects/${name}.json?_=${new Date().getTime()}`
-    return await axios
-      .get<ApiData<ProjectData>>(url)
-      .then((resp) => resp.data.data)
+  async getNfts(address: string): Promise<NftData[]> {
+    const url = `/nfts/${address}`
+    return await axios.get<NftData[]>(url).then((resp) => resp.data)
   }
 
-  async getResearchs(): Promise<ResearchData[]> {
-    const url = `/api/v1/researchs.json?_=${new Date().getTime()}`
-    return await axios
-      .get<ApiData<ResearchData[]>>(url)
-      .then((resp) => resp.data.data)
+  getImageUrl(nft: NftData): string {
+    const url = `/renderer/${nft.characteristic.rarity}.png?tid=${nft.tid}`
+    return url
   }
 }
 

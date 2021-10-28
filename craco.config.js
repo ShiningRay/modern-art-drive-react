@@ -29,13 +29,13 @@ module.exports = {
   },
   devServer: {
     proxy: {
-      '/api/*': {
-        target: 'http://localhost:8080',
+      '/nfts/*': {
+        target: 'https://mad.internal.nervina.cn/',
         changeOrigin: true,
         secure: false,
       },
-      '/assets/*': {
-        target: 'http://localhost:8080',
+      '/renderer/*': {
+        target: 'https://mad.internal.nervina.cn/',
         changeOrigin: true,
         secure: false,
       },
