@@ -1,0 +1,6 @@
+{
+  "root": "build/",
+  "routes": {
+    "/login_redirect/**": "index.html"
+  }
+}
