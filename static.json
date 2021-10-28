@@ -1,7 +1,7 @@
 {
   "root": "build/",
   "routes": {
-    "/login_redirect/**": "index.html"
+    "/login_redirect": "index.html"
   },
   "proxies": {
     "/nft/": {
