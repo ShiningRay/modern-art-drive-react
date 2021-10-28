@@ -16,8 +16,7 @@ module.exports = {
           TerserPlugin.options.terserOptions.compress.drop_console = true
         }
         // public path
-        webpackConfig.output.publicPath =
-          '//assets.zjzsxhy.com/digital_compound/'
+        webpackConfig.output.publicPath = '//assets.zjzsxhy.com/mad/'
       }
 
       webpackConfig.externals = {

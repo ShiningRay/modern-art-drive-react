@@ -12,7 +12,7 @@
     "start": "serve -s build",
     "lint": "eslint src",
     "mock": "http-server ./public",
-    "cdn": "scp -r build/* deploy@39.98.92.83:~/public/digital_compound/"
+    "cdn": "scp -r build/* deploy@39.98.92.83:~/public/mad/"
   },
   "dependencies": {
     "@lay2/pw-core": "^0.4.0-alpha.8",
