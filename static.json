@@ -5,10 +5,10 @@
   },
   "proxies": {
     "/nft/": {
-      "origin": "https://mad.internal.nervina.cn/"
+      "origin": "https://mad.internal.nervina.cn/nft/"
     },
-    "/renderer": {
-      "origin": "https://mad.internal.nervina.cn/"
+    "/renderer/": {
+      "origin": "https://mad.internal.nervina.cn/renderer/"
     }
   }
 }
