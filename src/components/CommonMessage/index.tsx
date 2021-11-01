@@ -1,5 +1,11 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
+import {
+  CheckCircleFilled,
+  CloseCircleFilled,
+  InfoCircleFilled,
+  WarningFilled,
+} from '@ant-design/icons'
 
 import './style.scss'
 
@@ -12,7 +18,20 @@ export const CommonMessage: React.FC<CommonMessageProps> = ({
   message,
   type = 'info',
 }) => {
-  return <div className="cm-message">{message}</div>
+  let icon = <InfoCircleFilled />
+  if (type === 'success') {
+    icon = <CheckCircleFilled />
+  } else if (type === 'error') {
+    icon = <CloseCircleFilled />
+  } else if (type === 'warn') {
+    icon = <WarningFilled />
+  }
+  return (
+    <div className={`cm-message ${type}`}>
+      {icon}
+      <span>{message}</span>
+    </div>
+  )
 }
 
 const rootId = `m${Math.round(Math.random() * 10000)}`

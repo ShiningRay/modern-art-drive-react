@@ -10,9 +10,27 @@
     padding: 6px 12px;
     border: var(--primary-color) solid 2px;
     border-radius: 3px;
-    background-color: var(--primary-color-p10);
-    color: var(--primary-color);
+    background-color: #fff;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+    color: var(--main-text);
     animation: cmmessageshow 0.15s ease;
+
+    .anticon {
+      margin-right: 6px;
+    }
+
+    &.info .anticon {
+      color: #15b1ef;
+    }
+    &.success .anticon {
+      color: #4dd10b;
+    }
+    &.warn .anticon {
+      color: #efab0f;
+    }
+    &.error .anticon {
+      color: #ff4646;
+    }
   }
 }
 

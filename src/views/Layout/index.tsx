@@ -5,8 +5,10 @@ import $ from 'jquery'
 import qs from 'qs'
 import logoImage from '../../assets/img/logo.svg'
 import CommonActiveableA from '../../components/CommonActiveableA'
+import message from '../../components/CommonMessage'
 import System from '../../store/system'
 import Unipass from '../../store/unipass'
+import { CopyToClipboard } from 'react-copy-to-clipboard'
 import './style.scss'
 
 // TODO: 是否要fix header
@@ -15,7 +17,7 @@ import './style.scss'
 const Header: React.FC = ({ children }) => {
   const { t } = useTranslation('trans')
   const { currentRouter } = System.useContainer()
-  const { login, maskedAddress } = Unipass.useContainer()
+  const { login, maskedAddress, address } = Unipass.useContainer()
 
   return (
     <header>
@@ -32,8 +34,13 @@ const Header: React.FC = ({ children }) => {
           <a className="learn" href="">
             {t('header.learn')}
           </a>
-          {maskedAddress ? (
-            <a className="connect">{maskedAddress}</a>
+          {maskedAddress && address ? (
+            <CopyToClipboard
+              text={address}
+              onCopy={() => message.success(t('copy'))}
+            >
+              <a className="connect">{maskedAddress}</a>
+            </CopyToClipboard>
           ) : (
             <a className="connect" onClick={login}>
               {t('header.connect')}
