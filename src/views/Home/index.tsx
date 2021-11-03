@@ -2,9 +2,47 @@ import React, { useEffect, useMemo, useState } from 'react'
 import CommonPageTitle from '../../components/CommonPageTitle'
 import Unipass from '../../store/unipass'
 import serverWalletAPI, { NftData } from '../../apis/ServerWalletAPI'
+import CommonModal, { CommonModalProps } from '../../components/CommonModal'
 import './style.scss'
 
-const NftCard: React.FC<NftData> = (data) => {
+interface NftFixModalProps extends CommonModalProps {
+  data: NftData | null
+  onOk: (data: NftData) => void
+}
+
+const NftFixModal: React.FC<NftFixModalProps> = ({ data, onOk, ...rest }) => {
+  if (!data) {
+    return <></>
+  }
+
+  const { tid } = data
+
+  const handleOk = (): void => {
+    if (!data) return
+    onOk(data)
+  }
+
+  return (
+    <CommonModal {...rest} title={`Fix #${tid}`} className="nft-fix-modal">
+      <div className="content">
+        <div className="desc">Are you sure to fix this nft?</div>
+        <div className="opts">
+          <button onClick={handleOk}>Yes</button>
+          <button className="cancel" onClick={rest.onClose}>
+            Cancel
+          </button>
+        </div>
+      </div>
+    </CommonModal>
+  )
+}
+
+interface NftCardProps {
+  data: NftData
+  onFix: (data: NftData) => void
+}
+
+const NftCard: React.FC<NftCardProps> = ({ data, onFix }) => {
   const [loading, setLoading] = useState(true)
   const url = useMemo(() => serverWalletAPI.getImageUrl(data), [data])
 
@@ -13,7 +51,7 @@ const NftCard: React.FC<NftData> = (data) => {
   }
 
   return (
-    <div className="nft-card">
+    <div className="nft-card" onClick={() => onFix(data)}>
       <div className="img">
         <img src={url} alt="" onLoad={handleLoad} />
         {loading && <div className="loading">Loading...</div>}
@@ -24,8 +62,10 @@ const NftCard: React.FC<NftData> = (data) => {
 }
 
 export const Home: React.FC = () => {
+  const [modalVisible, showModal] = useState(false)
   const [nfts, setNfts] = useState<NftData[]>([])
-  const { address } = Unipass.useContainer()
+  const { address, sign } = Unipass.useContainer()
+  const [data, setData] = useState<NftData | null>(null)
 
   useEffect(() => {
     if (!address) return
@@ -38,21 +78,39 @@ export const Home: React.FC = () => {
       .catch((e) => console.log(e))
   }, [address])
 
+  const handleFix = (data: NftData): void => {
+    setData(data)
+    showModal(true)
+  }
+
+  const handleFixOk = (data: NftData): void => {
+    const message = 'TEST'
+    sign(message).catch((e) => console.log(e))
+  }
+
   return (
-    <div id="home">
-      <div className="container">
-        <CommonPageTitle lines={['My Nfts']} />
-        <div className="cards">
-          {nfts.map((nft) => (
-            <NftCard {...nft} key={nft.tid} />
-          ))}
-        </div>
-        {nfts.length === 0 && (
-          <div className="empty">
-            {address ? 'You have no nft yet' : 'Please connect wallet'}
+    <>
+      <div id="home">
+        <div className="container">
+          <CommonPageTitle lines={['My Nfts']} />
+          <div className="cards">
+            {nfts.map((nft, i) => (
+              <NftCard data={nft} key={i} onFix={handleFix} />
+            ))}
           </div>
-        )}
+          {nfts.length === 0 && (
+            <div className="empty">
+              {address ? 'You have no nft yet' : 'Please connect wallet'}
+            </div>
+          )}
+        </div>
       </div>
-    </div>
+      <NftFixModal
+        data={data}
+        visible={modalVisible && !!data}
+        onClose={() => showModal(false)}
+        onOk={handleFixOk}
+      />
+    </>
   )
 }

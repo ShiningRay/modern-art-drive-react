@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useLocation } from 'react-router-dom'
+import { useLocation, useHistory } from 'react-router-dom'
 import $ from 'jquery'
 import qs from 'qs'
 import logoImage from '../../assets/img/logo.svg'
@@ -18,12 +18,16 @@ const Header: React.FC = ({ children }) => {
   const { t } = useTranslation('trans')
   const { currentRouter } = System.useContainer()
   const { login, maskedAddress, address } = Unipass.useContainer()
+  const history = useHistory()
 
   return (
     <header>
       <div className="container">
         <div className="menu">
-          <CommonActiveableA active={currentRouter?.key === 'Home'}>
+          <CommonActiveableA
+            active={currentRouter?.key === 'Home'}
+            onClick={() => history.push('/')}
+          >
             {t('header.market')}
           </CommonActiveableA>
           <CommonActiveableA>{t('header.community')}</CommonActiveableA>

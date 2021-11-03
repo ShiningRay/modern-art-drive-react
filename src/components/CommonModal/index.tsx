@@ -25,17 +25,19 @@ const CommonModalContainer = styled.div`
       position: absolute;
       top: 50%;
       left: 50%;
+      background-color: #fff;
       transform: translate3d(-50%, -50%, 0);
-      border: var(--primary-color) solid 2px;
       border-radius: 3px;
-      background-color: var(--primary-color-p10);
-      color: var(--primary-color);
+      color: var(--main-text);
+      min-width: 300px;
+      max-width: calc(100vw - 24px);
     }
     &-title {
       padding: 6px 16px;
-      border-bottom: var(--primary-color) solid 2px;
+      border-bottom: #ddd solid 1px;
       flex-grow: 0;
       flex-shrink: 0;
+      font-size: 24px;
     }
     &-content {
       padding: 16px;
@@ -46,7 +48,7 @@ const CommonModalContainer = styled.div`
   }
 `
 
-interface CommonModalProps {
+export interface CommonModalProps {
   visible: boolean
   onClose: () => void
   title?: string | React.Component

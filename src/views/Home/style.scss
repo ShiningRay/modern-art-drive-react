@@ -52,6 +52,32 @@
   opacity: 0.5;
 }
 
+.nft-fix-modal .content {
+  .desc {
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  .opts {
+    text-align: center;
+    
+    button {
+      margin: 0 6px;
+      padding: 6px 24px;
+      border-radius: 20px;
+      cursor: pointer;
+      text-decoration: none;
+      background-color: #25282A;
+      color: #fff;
+      border: none;
+
+      &.cancel {
+        background-color: #D6D2C4;
+        color: #000;
+      }
+    }
+  }
+}
+
 @media screen and (max-width: 600px) {
   @import './style.m.scss';
 }
