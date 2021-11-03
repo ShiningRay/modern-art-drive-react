@@ -1,14 +1,14 @@
 {
   "root": "build/",
   "routes": {
-    "/login_redirect/**": "index.html"
+    "/login_redirect": "index.html"
   },
   "proxies": {
-    "/nft/": {
-      "origin": "https://mad.internal.nervina.cn/"
+    "/nfts/": {
+      "origin": "https://mad.internal.nervina.cn/nfts/"
     },
-    "/renderer": {
-      "origin": "https://mad.internal.nervina.cn/"
+    "/renderer/": {
+      "origin": "https://mad.internal.nervina.cn/renderer/"
     }
   }
 }
