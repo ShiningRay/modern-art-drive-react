@@ -3,6 +3,7 @@ import CommonPageTitle from '../../components/CommonPageTitle'
 import Unipass from '../../store/unipass'
 import serverWalletAPI, { NftData } from '../../apis/ServerWalletAPI'
 import CommonModal, { CommonModalProps } from '../../components/CommonModal'
+import message from '../../components/CommonMessage'
 import './style.scss'
 
 interface NftFixModalProps extends CommonModalProps {
@@ -66,6 +67,7 @@ export const Home: React.FC = () => {
   const [nfts, setNfts] = useState<NftData[]>([])
   const { address, sign } = Unipass.useContainer()
   const [data, setData] = useState<NftData | null>(null)
+  const { waitingSign, setWaitingSign } = Unipass.useContainer()
 
   useEffect(() => {
     if (!address) return
@@ -74,7 +76,24 @@ export const Home: React.FC = () => {
       //   'ckb1qzda0cr08m85hc8jlnfp3zer7xulejywt49kt2rr0vthywaa50xwsqggv83tqz8vpu43u6zklw9zgxvzytsz7xgnzqksz'
       // )
       .getNfts(address)
-      .then(setNfts)
+      .then((data) => {
+        setNfts(data)
+        return data
+      })
+      .then(() => {
+        if (waitingSign) {
+          return serverWalletAPI
+            .fixNft(
+              waitingSign.args[0],
+              waitingSign.args[1],
+              waitingSign.data.sig
+            )
+            .then(() => {
+              message.success('fix success')
+              setWaitingSign(null)
+            })
+        }
+      })
       .catch((e) => console.log(e))
   }, [address])
 
@@ -85,7 +104,10 @@ export const Home: React.FC = () => {
 
   const handleFixOk = (data: NftData): void => {
     const message = 'TEST'
-    sign(message).catch((e) => console.log(e))
+    sign(message, [
+      data.characteristic.rarity.toString(),
+      data.tid.toString(),
+    ]).catch((e) => console.log(e))
   }
 
   return (

@@ -15,7 +15,7 @@ import Store from '../store'
 
 export enum RoutePath {
   Home = '/',
-  LoginRedirect = '/login_redirect',
+  LoginRedirect = '/redirect/:action',
 }
 
 export const RouterContext = React.createContext({

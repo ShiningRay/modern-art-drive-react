@@ -38,6 +38,11 @@ module.exports = {
         changeOrigin: true,
         secure: false,
       },
+      '/fix/*': {
+        target: 'https://mad.internal.nervina.cn/',
+        changeOrigin: true,
+        secure: false,
+      },
     },
   },
 }

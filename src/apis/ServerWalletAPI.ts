@@ -37,6 +37,15 @@ export class ServerWalletAPI {
     const url = `/renderer/${nft.characteristic.rarity}.png?tid=${nft.tid}`
     return url
   }
+
+  async fixNft(
+    rarity: string | number,
+    tid: string | number,
+    sig: string
+  ): Promise<any> {
+    const url = `/fix/${rarity}/${tid}`
+    return await axios.post<any>(url, { sig }).then((resp) => resp.data)
+  }
 }
 
 const serverWalletAPI = new ServerWalletAPI()
