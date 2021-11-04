@@ -48,6 +48,7 @@ export interface useUnipassProps {
   sign: (message: string, args: string[]) => Promise<void>
   waitingSign: WaitingSign | null
   setWaitingSign: (waitingSign: WaitingSign | null) => void
+  signout: () => void
 }
 
 export interface unipassLoginData {
@@ -91,6 +92,13 @@ function useUnipass(): useUnipassProps {
     })
     window.location.replace(url)
   }, [])
+
+  const signout = useCallback(() => {
+    setAddress(null)
+    setProvider(null)
+    setLimitTime('0')
+    setPubkey('')
+  }, [setAddress, setProvider, setLimitTime, setPubkey])
 
   const updateUserInfo = useCallback(
     async (email: string, pubkey: string) => {
@@ -163,6 +171,7 @@ function useUnipass(): useUnipassProps {
     waitingSign,
     setWaitingSign,
     sign,
+    signout,
   }
 }
 

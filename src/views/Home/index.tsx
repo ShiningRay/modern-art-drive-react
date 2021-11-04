@@ -5,6 +5,7 @@ import serverWalletAPI, { NftData } from '../../apis/ServerWalletAPI'
 import CommonModal, { CommonModalProps } from '../../components/CommonModal'
 import message from '../../components/CommonMessage'
 import './style.scss'
+import { PushpinOutlined } from '@ant-design/icons'
 
 interface NftFixModalProps extends CommonModalProps {
   data: NftData | null
@@ -52,12 +53,15 @@ const NftCard: React.FC<NftCardProps> = ({ data, onFix }) => {
   }
 
   return (
-    <div className="nft-card" onClick={() => onFix(data)}>
+    <div className="nft-card">
       <div className="img">
         <img src={url} alt="" onLoad={handleLoad} />
         {loading && <div className="loading">Loading...</div>}
       </div>
-      <div className="tid">#{data.tid}</div>
+      <div className="tid">
+        <span>#{data.tid}</span>
+        {!data.fixed && <PushpinOutlined onClick={() => onFix(data)} />}
+      </div>
     </div>
   )
 }
@@ -65,12 +69,15 @@ const NftCard: React.FC<NftCardProps> = ({ data, onFix }) => {
 export const Home: React.FC = () => {
   const [modalVisible, showModal] = useState(false)
   const [nfts, setNfts] = useState<NftData[]>([])
-  const { address, sign } = Unipass.useContainer()
   const [data, setData] = useState<NftData | null>(null)
-  const { waitingSign, setWaitingSign } = Unipass.useContainer()
+  const { address, sign, waitingSign, setWaitingSign } = Unipass.useContainer()
 
   useEffect(() => {
-    if (!address) return
+    if (!address) {
+      setNfts([])
+      setData(null)
+      return
+    }
     serverWalletAPI
       // .getNfts(
       //   'ckb1qzda0cr08m85hc8jlnfp3zer7xulejywt49kt2rr0vthywaa50xwsqggv83tqz8vpu43u6zklw9zgxvzytsz7xgnzqksz'

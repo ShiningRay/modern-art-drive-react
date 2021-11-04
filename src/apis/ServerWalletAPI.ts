@@ -19,6 +19,7 @@ export interface NftData {
     txHash: string
     index: string
   }
+  fixed: boolean
 }
 
 export class ServerWalletAPI {

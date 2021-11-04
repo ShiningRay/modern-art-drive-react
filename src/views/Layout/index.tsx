@@ -17,7 +17,7 @@ import './style.scss'
 const Header: React.FC = ({ children }) => {
   const { t } = useTranslation('trans')
   const { currentRouter } = System.useContainer()
-  const { login, maskedAddress, address } = Unipass.useContainer()
+  const { login, maskedAddress, address, signout } = Unipass.useContainer()
   const history = useHistory()
 
   return (
@@ -35,16 +35,18 @@ const Header: React.FC = ({ children }) => {
         </div>
         <img src={logoImage} alt="" className="logo" />
         <div className="opt">
-          <a className="learn" href="">
-            {t('header.learn')}
-          </a>
           {maskedAddress && address ? (
-            <CopyToClipboard
-              text={address}
-              onCopy={() => message.success(t('copy'))}
-            >
-              <a className="connect">{maskedAddress}</a>
-            </CopyToClipboard>
+            <>
+              <a className="learn" onClick={signout}>
+                {t('header.disconnect')}
+              </a>
+              <CopyToClipboard
+                text={address}
+                onCopy={() => message.success(t('copy'))}
+              >
+                <a className="connect">{maskedAddress}</a>
+              </CopyToClipboard>
+            </>
           ) : (
             <a className="connect" onClick={login}>
               {t('header.connect')}

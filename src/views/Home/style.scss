@@ -8,7 +8,6 @@
   .nft-card {
     min-width: 0;
     border: transparent solid 1px;
-    cursor: pointer;
 
     &:hover {
       border-color: #000;
@@ -41,6 +40,12 @@
     .tid {
       font-size: 30px;
       font-weight: 600;
+      display: flex;
+      justify-content: space-between;
+
+      .anticon {
+        cursor: pointer;
+      }
     }
   }
 }
