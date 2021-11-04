@@ -1,7 +1,7 @@
 {
   "root": "build/",
   "routes": {
-    "/login_redirect": "index.html"
+    "/redirect/:action": "index.html"
   },
   "proxies": {
     "/nfts/": {
@@ -9,6 +9,9 @@
     },
     "/renderer/": {
       "origin": "https://mad.internal.nervina.cn/renderer/"
+    },
+    "/fix/": {
+      "origin": "https://mad.internal.nervina.cn/fix/"
     }
   }
 }
