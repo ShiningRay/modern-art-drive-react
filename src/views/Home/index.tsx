@@ -110,7 +110,7 @@ export const Home: React.FC = () => {
   }
 
   const handleFixOk = (data: NftData): void => {
-    const message = 'TEST'
+    const message = `Fix rarity #${data.tid}`
     sign(message, [
       data.characteristic.rarity.toString(),
       data.tid.toString(),
