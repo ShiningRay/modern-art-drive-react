@@ -4,6 +4,16 @@ import axios, { AxiosInstance } from 'axios'
 
 export type NftDataRarity = 'common' | 'rare' | 'epic'
 
+export type NftWordDataPosition = 'noun' | 'verb' | 'adjective'
+
+export interface NftWordData {
+  position: NftWordDataPosition
+  content: {
+    en: string
+    zh: string
+  }
+}
+
 export interface NftData {
   tokenClassId: number
   tid: number
@@ -17,6 +27,7 @@ export interface NftData {
     rarity: NftDataRarity
     typeArgs: string
   }
+  sentence: NftWordData
   exercised: boolean
   exercisedAt?: string
   exercisedAtBlock?: number

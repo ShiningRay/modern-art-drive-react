@@ -23,6 +23,14 @@ function generateUnipassNewUrl(
   return urlObj.href
 }
 
+export function toHex(str: string): string {
+  let result = ''
+  for (let i = 0; i < str.length; i++) {
+    result += str.charCodeAt(i).toString(16)
+  }
+  return result
+}
+
 function generateSuccessUrl(action: string, args: string[] = []): string {
   return `${window.location.origin}/redirect/${action}_${args.join('_')}`
 }
@@ -139,10 +147,7 @@ function useUnipass(): useUnipassProps {
   const sign = useCallback(
     async (message: string, args: string[] = []) => {
       if (!pubkey) return
-      const messageHash = createHash('SHA256')
-        .update(message || '0x')
-        .digest('hex')
-        .toString()
+      const messageHash = toHex(message)
       const successUrl = generateSuccessUrl('sign', args)
       const url = generateUnipassNewUrl(UNIPASS_URL, 'sign', {
         success_url: successUrl,

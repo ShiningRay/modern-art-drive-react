@@ -83,6 +83,71 @@
   }
 }
 
+.nft-add-word-modal {
+  .content {
+    width: 320px;
+  }
+
+  .new-word {
+    margin-bottom: 24px;
+
+    .title {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 12px;
+
+      span {
+        font-size: 16px;
+        font-weight: 600;
+      }
+      select {
+        border: #000 solid 2px;
+        outline: none;
+      }
+    }
+
+    .inputs {
+      display: flex;
+      column-gap: 12px;
+    }
+
+    .input {
+      width: 50%;
+      margin-bottom: 6px;
+
+      span {
+        display: inline-block;
+        width: 20%;
+      }
+      input {
+        width: 80%;
+        border: #000 solid 2px;
+        outline: none;
+      }
+    }
+  }
+
+  .opts {
+    text-align: center;
+    
+    button {
+      margin: 0 6px;
+      padding: 6px 24px;
+      border-radius: 20px;
+      cursor: pointer;
+      text-decoration: none;
+      background-color: #25282A;
+      color: #fff;
+      border: none;
+
+      &.cancel {
+        background-color: #D6D2C4;
+        color: #000;
+      }
+    }
+  }
+}
+
 @media screen and (max-width: 600px) {
   @import './style.m.scss';
 }
