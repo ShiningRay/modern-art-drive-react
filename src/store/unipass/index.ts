@@ -9,7 +9,7 @@ import {
 import PWCore, { IndexerCollector, Provider } from '@lay2/pw-core'
 import UnipassProvider from './UnipassProvider'
 import { useLocalStorage } from '../../hooks/useLocalStorage'
-import { createHash } from 'crypto'
+//import { createHash } from 'crypto'
 
 function generateUnipassNewUrl(
   host: string,
