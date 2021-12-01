@@ -79,9 +79,6 @@ export const Home: React.FC = () => {
       return
     }
     serverWalletAPI
-      // .getNfts(
-      //   'ckb1qzda0cr08m85hc8jlnfp3zer7xulejywt49kt2rr0vthywaa50xwsqggv83tqz8vpu43u6zklw9zgxvzytsz7xgnzqksz'
-      // )
       .getNfts(address)
       .then((data) => {
         setNfts(data)
@@ -110,11 +107,10 @@ export const Home: React.FC = () => {
   }
 
   const handleFixOk = (data: NftData): void => {
-    const message = 'TEST'
-    sign(message, [
-      data.characteristic.rarity.toString(),
-      data.tid.toString(),
-    ]).catch((e) => console.log(e))
+    const message = `Fix ${data.class.rarity} #${data.tid}`
+    sign(message, [data.class.rarity, data.tid.toString()]).catch((e) =>
+      console.log(e)
+    )
   }
 
   return (

@@ -2,24 +2,24 @@
 import { SERVER_URL } from '../constants'
 import axios, { AxiosInstance } from 'axios'
 
+export type NftDataRarity = 'common' | 'rare' | 'epic'
+
 export interface NftData {
-  tokenId: string
-  classId: string
+  tokenClassId: number
   tid: number
-  lock: {
-    args: string
-    codeHash: string
-    hashType: string
-  }
-  characteristic: {
-    rarity: number
-  }
-  address: string
-  outPoint: {
-    txHash: string
-    index: string
-  }
+  holder: string
   fixed: boolean
+  fixedAt?: string
+  fixedAtBlock?: number
+  class: {
+    color: string
+    id: number
+    rarity: NftDataRarity
+    typeArgs: string
+  }
+  exercised: boolean
+  exercisedAt?: string
+  exercisedAtBlock?: number
 }
 
 export class ServerWalletAPI {
@@ -35,7 +35,7 @@ export class ServerWalletAPI {
   }
 
   getImageUrl(nft: NftData): string {
-    const url = `/renderer/${nft.characteristic.rarity}.png?tid=${nft.tid}`
+    const url = `/renderer/${nft.class.rarity}.png?tid=${nft.tid}`
     return url
   }
 
