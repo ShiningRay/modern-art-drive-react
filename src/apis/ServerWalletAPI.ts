@@ -58,6 +58,16 @@ export class ServerWalletAPI {
     const url = `/fix/${rarity}/${tid}`
     return await axios.post<any>(url, { sig }).then((resp) => resp.data)
   }
+
+  async addWords(
+    rarity: string | number,
+    tid: string | number,
+    words: NftWordData[],
+    sig: string
+  ): Promise<any> {
+    const url = `/add/${rarity}/${tid}`
+    return await axios.post<any>(url, { words, sig }).then((resp) => resp.data)
+  }
 }
 
 const serverWalletAPI = new ServerWalletAPI()

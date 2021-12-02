@@ -114,6 +114,7 @@
     .input {
       width: 50%;
       margin-bottom: 6px;
+      position: relative;
 
       span {
         display: inline-block;
@@ -123,6 +124,27 @@
         width: 80%;
         border: #000 solid 2px;
         outline: none;
+      }
+
+      &.error {
+        span {
+          color: red;
+        }
+
+        input {
+          border-color: red;
+        }
+
+        &::after {
+          content: attr(data-error);
+          display: block;
+          white-space: nowrap;
+          position: absolute;
+          top: 100%;
+          right: 0;
+          font-size: 12px;
+          color: red;
+        }
       }
     }
   }

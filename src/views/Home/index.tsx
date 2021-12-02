@@ -16,6 +16,10 @@ interface NftFixModalProps extends CommonModalProps {
   data: NftData | null
   onOk: (data: NftData) => void
 }
+interface NftAddWordModalProps extends CommonModalProps {
+  data: NftData | null
+  onOk: (data: NftData, words: NftWordData[]) => void
+}
 
 const NftFixModal: React.FC<NftFixModalProps> = ({ data, onOk, ...rest }) => {
   if (!data) {
@@ -44,8 +48,8 @@ const NftFixModal: React.FC<NftFixModalProps> = ({ data, onOk, ...rest }) => {
   )
 }
 
-// const zhReg = /^[\u4e00-\u9fa5]{0,5}$/
-// const enReg = /^[a-zA-Z]{0,10}$/
+const zhReg = /^[\u4e00-\u9fa5]{0,5}$/
+const enReg = /^[a-zA-Z]{0,10}$/
 function getDefaultWord(): NftWordData {
   return {
     position: 'noun',
@@ -65,7 +69,7 @@ interface NftWordErr {
   en: string
   zh: string
 }
-const NftAddWrodModal: React.FC<NftFixModalProps> = ({
+const NftAddWrodModal: React.FC<NftAddWordModalProps> = ({
   data,
   onOk,
   ...rest
@@ -123,10 +127,37 @@ const NftAddWrodModal: React.FC<NftFixModalProps> = ({
     setWords([...words])
   }
 
+  const handleCheck = (): boolean => {
+    let result = true
+    words.forEach((word, i) => {
+      const { en, zh } = word.content
+      const err = errors[i]
+      err.en = ''
+      err.zh = ''
+      if (!en) {
+        err.en = "Can't be empty"
+        result = false
+      } else if (!enReg.test(en)) {
+        err.en = 'only a-z, A-Z supported'
+        result = false
+      }
+      if (!zh) {
+        err.zh = "Can't be empty"
+        result = false
+      } else if (!zhReg.test(zh)) {
+        err.zh = 'Only chinese supported'
+        result = false
+      }
+    })
+    setErrors([...errors])
+    return result
+  }
+
   const handleOk = (): void => {
     if (!data) return
-    // TODO: check
-    onOk(data)
+    const result = handleCheck()
+    if (!result) return
+    onOk(data, words)
   }
 
   return (
@@ -151,6 +182,7 @@ const NftAddWrodModal: React.FC<NftFixModalProps> = ({
               <div
                 className={classnames('input', { error: errors[i].en })}
                 data-error={errors[i].en}
+                onBlur={handleCheck}
               >
                 <span>EN</span>
                 <input
@@ -162,6 +194,7 @@ const NftAddWrodModal: React.FC<NftFixModalProps> = ({
               <div
                 className={classnames('input', { error: errors[i].zh })}
                 data-error={errors[i].zh}
+                onBlur={handleCheck}
               >
                 <span>CN</span>
                 <input
@@ -241,16 +274,23 @@ export const Home: React.FC = () => {
       })
       .then(() => {
         if (waitingSign) {
-          return serverWalletAPI
-            .fixNft(
-              waitingSign.args[0],
-              waitingSign.args[1],
-              waitingSign.data.sig
-            )
-            .then(() => {
-              message.success('fix success')
-              setWaitingSign(null)
-            })
+          const label = waitingSign.args.label
+          const args = waitingSign.args.args
+          if (label === 'fix') {
+            return serverWalletAPI
+              .fixNft(args[0], args[1], waitingSign.data.sig)
+              .then(() => {
+                message.success('fix success')
+                setWaitingSign(null)
+              })
+          } else if (label === 'addwords') {
+            return serverWalletAPI
+              .addWords(args[0], args[1], args[2], waitingSign.data.sig)
+              .then(() => {
+                message.success('add words success')
+                setWaitingSign(null)
+              })
+          }
         }
       })
       .catch((e) => console.log(e))
@@ -268,9 +308,18 @@ export const Home: React.FC = () => {
 
   const handleFixOk = (data: NftData): void => {
     const message = `Fix ${data.class.rarity} #${data.tid}`
-    sign(message, [data.class.rarity, data.tid.toString()]).catch((e) =>
+    sign(message, 'fix', [data.class.rarity, data.tid.toString()]).catch((e) =>
       console.log(e)
     )
+  }
+
+  const handleAddWordOk = (data: NftData, words: NftWordData[]): void => {
+    const message = `Add ${words.length} words to ${data.class.rarity} via #${data.tid}`
+    sign(message, 'addwords', [
+      data.class.rarity,
+      data.tid.toString(),
+      words,
+    ]).catch((e) => console.log(e))
   }
 
   return (
@@ -305,7 +354,7 @@ export const Home: React.FC = () => {
         data={data}
         visible={addWordModalVisible && !!data}
         onClose={() => showAddWordModal(false)}
-        onOk={handleFixOk}
+        onOk={handleAddWordOk}
       />
     </>
   )

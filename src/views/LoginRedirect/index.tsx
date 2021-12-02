@@ -16,9 +16,13 @@ export const LoginRedirect: React.FC = () => {
       history.push('/')
       return
     }
-    if (action === 'login') {
-      try {
-        const data = JSON.parse(unipassRet as string)
+    try {
+      const data = JSON.parse(unipassRet as string)
+      if (!data.data.sig) {
+        history.push('/')
+        return
+      }
+      if (action === 'login') {
         parseLoginData(data.data)
           .then(() => {
             history.push('/')
@@ -26,12 +30,7 @@ export const LoginRedirect: React.FC = () => {
           .catch(() => {
             console.log('e')
           })
-      } catch (e) {
-        history.push('/')
-      }
-    } else if (action === 'sign') {
-      try {
-        const data = JSON.parse(unipassRet as string)
+      } else if (action === 'sign') {
         parseSignData(data.data, args)
           .then(() => {
             history.push('/')
@@ -39,9 +38,9 @@ export const LoginRedirect: React.FC = () => {
           .catch(() => {
             console.log('e')
           })
-      } catch (e) {
-        history.push('/')
       }
+    } catch (e) {
+      history.push('/')
     }
   }, [])
 

@@ -9,7 +9,6 @@ import {
 import PWCore, { IndexerCollector, Provider } from '@lay2/pw-core'
 import UnipassProvider from './UnipassProvider'
 import { useLocalStorage } from '../../hooks/useLocalStorage'
-import { createHash } from 'crypto'
 
 function generateUnipassNewUrl(
   host: string,
@@ -31,18 +30,32 @@ export function toHex(str: string): string {
   return result
 }
 
-function generateSuccessUrl(action: string, args: string[] = []): string {
-  return `${window.location.origin}/redirect/${action}_${args.join('_')}`
+function generateSuccessUrlArgs(args: any): string {
+  return encodeURIComponent(
+    btoa(unescape(encodeURIComponent(JSON.stringify(args))))
+  )
+}
+
+function parseSuccessUrlArgs(argsStr: string): any {
+  return JSON.parse(
+    decodeURIComponent(escape(atob(decodeURIComponent(argsStr))))
+  )
+}
+
+function generateSuccessUrl(action: string, args: any = []): string {
+  return `${window.location.origin}/redirect/${action}_${generateSuccessUrlArgs(
+    args
+  )}`
 }
 
 export function parseSuccessUrl(param: string): {
   action: string
-  args: string[]
+  args: any
 } {
   const p = param.split('_')
   return {
     action: p[0],
-    args: p.slice(1),
+    args: parseSuccessUrlArgs(p[1]),
   }
 }
 
@@ -52,8 +65,8 @@ export interface useUnipassProps {
   provider: Provider | null
   login: () => void
   parseLoginData: (data: unipassLoginData) => Promise<void>
-  parseSignData: (data: unipassSignData, args: string[]) => Promise<void>
-  sign: (message: string, args: string[]) => Promise<void>
+  parseSignData: (data: unipassSignData, args: any) => Promise<void>
+  sign: (message: string, label: string, args: any) => Promise<void>
   waitingSign: WaitingSign | null
   setWaitingSign: (waitingSign: WaitingSign | null) => void
   signout: () => void
@@ -71,7 +84,7 @@ export interface unipassSignData {
 
 export interface WaitingSign {
   data: unipassSignData
-  args: string[]
+  args: any
 }
 
 const CKBEnv = {
@@ -135,7 +148,7 @@ function useUnipass(): useUnipassProps {
   )
 
   const parseSignData = useCallback(
-    async (data: unipassSignData, args: string[] = []) => {
+    async (data: unipassSignData, args: any = []) => {
       setWaitingSign({
         data,
         args,
@@ -145,10 +158,10 @@ function useUnipass(): useUnipassProps {
   )
 
   const sign = useCallback(
-    async (message: string, args: string[] = []) => {
+    async (message: string, label: string, args: any = []) => {
       if (!pubkey) return
       const messageHash = toHex(message)
-      const successUrl = generateSuccessUrl('sign', args)
+      const successUrl = generateSuccessUrl('sign', { label, args })
       const url = generateUnipassNewUrl(UNIPASS_URL, 'sign', {
         success_url: successUrl,
         pubkey,
