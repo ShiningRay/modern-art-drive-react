@@ -264,10 +264,10 @@ export const Home: React.FC = () => {
       return
     }
     serverWalletAPI
-      .getNfts(
-        'ckt1qqfy5cxd0x0pl09xvsvkmert8alsajm38qfnmjh2fzfu2804kq47vqfhs5m4f8d60hfuajnx3znz9egtd9yjh5qrw3yee'
-      )
-      // .getNfts(address)
+      // .getNfts(
+      //   'ckt1qqfy5cxd0x0pl09xvsvkmert8alsajm38qfnmjh2fzfu2804kq47vqfhs5m4f8d60hfuajnx3znz9egtd9yjh5qrw3yee'
+      // )
+      .getNfts(address)
       .then((data) => {
         setNfts(data)
         return data
@@ -283,6 +283,8 @@ export const Home: React.FC = () => {
                 message.success('fix success')
                 setWaitingSign(null)
               })
+              .then(async () => await serverWalletAPI.getNfts(address))
+              .then(setNfts)
           } else if (label === 'addwords') {
             return serverWalletAPI
               .addWords(args[0], args[1], args[2], waitingSign.data.sig)
@@ -290,6 +292,8 @@ export const Home: React.FC = () => {
                 message.success('add words success')
                 setWaitingSign(null)
               })
+              .then(async () => await serverWalletAPI.getNfts(address))
+              .then(setNfts)
           }
         }
       })
