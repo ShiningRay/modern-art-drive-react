@@ -85,13 +85,13 @@ const NftAddWrodModal: React.FC<NftAddWordModalProps> = ({
         case 'common':
           defaultWords.push(getDefaultWord())
           defaultErrors.push(getDefaultWordErr())
-          break;
+          break
         case 'rare':
           defaultWords.push(getDefaultWord())
           defaultWords.push(getDefaultWord())
           defaultErrors.push(getDefaultWordErr())
           defaultErrors.push(getDefaultWordErr())
-          break;
+          break
         case 'epic':
           defaultWords.push(getDefaultWord())
           defaultWords.push(getDefaultWord())
