@@ -81,21 +81,24 @@ const NftAddWrodModal: React.FC<NftAddWordModalProps> = ({
     if (rest.visible && data) {
       const defaultWords: NftWordData[] = []
       const defaultErrors: NftWordErr[] = []
-      if (data.class.rarity === 'common') {
-        defaultWords.push(getDefaultWord())
-        defaultErrors.push(getDefaultWordErr())
-      } else if (data.class.rarity === 'rare') {
-        defaultWords.push(getDefaultWord())
-        defaultWords.push(getDefaultWord())
-        defaultErrors.push(getDefaultWordErr())
-        defaultErrors.push(getDefaultWordErr())
-      } else if (data.class.rarity === 'epic') {
-        defaultWords.push(getDefaultWord())
-        defaultWords.push(getDefaultWord())
-        defaultWords.push(getDefaultWord())
-        defaultErrors.push(getDefaultWordErr())
-        defaultErrors.push(getDefaultWordErr())
-        defaultErrors.push(getDefaultWordErr())
+      switch (data.class.rarity) {
+        case 'common':
+          defaultWords.push(getDefaultWord())
+          defaultErrors.push(getDefaultWordErr())
+          break;
+        case 'rare':
+          defaultWords.push(getDefaultWord())
+          defaultWords.push(getDefaultWord())
+          defaultErrors.push(getDefaultWordErr())
+          defaultErrors.push(getDefaultWordErr())
+          break;
+        case 'epic':
+          defaultWords.push(getDefaultWord())
+          defaultWords.push(getDefaultWord())
+          defaultWords.push(getDefaultWord())
+          defaultErrors.push(getDefaultWordErr())
+          defaultErrors.push(getDefaultWordErr())
+          defaultErrors.push(getDefaultWordErr())
       }
       setWords(defaultWords)
       setErrors(defaultErrors)
