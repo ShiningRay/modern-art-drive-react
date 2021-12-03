@@ -18,10 +18,6 @@ export const LoginRedirect: React.FC = () => {
     }
     try {
       const data = JSON.parse(unipassRet as string)
-      if (!data.data.sig) {
-        history.push('/')
-        return
-      }
       if (action === 'login') {
         parseLoginData(data.data)
           .then(() => {
@@ -31,6 +27,10 @@ export const LoginRedirect: React.FC = () => {
             console.log('e')
           })
       } else if (action === 'sign') {
+        if (!data.data.sig) {
+          history.push('/')
+          return
+        }
         parseSignData(data.data, args)
           .then(() => {
             history.push('/')
