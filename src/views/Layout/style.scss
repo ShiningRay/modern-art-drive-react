@@ -72,6 +72,19 @@ footer {
   padding: 12px 0;
 }
 
+.fixed-marquee {
+  background-color: #000;
+  color: #fff;
+
+  span {
+    margin: 0 20px;
+  }
+
+  .overlay {
+    display: none;
+  }
+}
+
 @media screen and (max-width: 600px) {
   @import './style.m.scss';
 }

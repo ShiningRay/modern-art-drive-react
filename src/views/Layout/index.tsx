@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useLocation, useHistory } from 'react-router-dom'
 import $ from 'jquery'
@@ -9,52 +9,71 @@ import message from '../../components/CommonMessage'
 import System from '../../store/system'
 import Unipass from '../../store/unipass'
 import { CopyToClipboard } from 'react-copy-to-clipboard'
+import Marquee from 'react-fast-marquee'
 import './style.scss'
+import serverWalletAPI, { RecnetFixData } from '../../apis/ServerWalletAPI'
 
 // TODO: 是否要fix header
 // const HEADER_TOP = 100
 
 const Header: React.FC = ({ children }) => {
+  const [recentFix, setRecnetFix] = useState<RecnetFixData[]>([])
   const { t } = useTranslation('trans')
   const { currentRouter } = System.useContainer()
   const { login, maskedAddress, address, signout } = Unipass.useContainer()
   const history = useHistory()
 
+  useEffect(() => {
+    serverWalletAPI
+      .getRecnetFix()
+      .then(setRecnetFix)
+      .catch((e) => console.log(e))
+  }, [])
+
   return (
-    <header>
-      <div className="container">
-        <div className="menu">
-          <CommonActiveableA
-            active={currentRouter?.key === 'Home'}
-            onClick={() => history.push('/')}
-          >
-            {t('header.market')}
-          </CommonActiveableA>
-          <CommonActiveableA>{t('header.community')}</CommonActiveableA>
-          <CommonActiveableA>{t('header.create')}</CommonActiveableA>
-        </div>
-        <img src={logoImage} alt="" className="logo" />
-        <div className="opt">
-          {maskedAddress && address ? (
-            <>
-              <a className="learn" onClick={signout}>
-                {t('header.disconnect')}
+    <>
+      {recentFix.length > 0 && (
+        <Marquee className="fixed-marquee">
+          {recentFix.map((fix) => (
+            <span>{`#${fix.tid} Fixed: ${fix.sentence.en}; ${fix.sentence.zh}`}</span>
+          ))}
+        </Marquee>
+      )}
+      <header>
+        <div className="container">
+          <div className="menu">
+            <CommonActiveableA
+              active={currentRouter?.key === 'Home'}
+              onClick={() => history.push('/')}
+            >
+              {t('header.market')}
+            </CommonActiveableA>
+            <CommonActiveableA>{t('header.community')}</CommonActiveableA>
+            <CommonActiveableA>{t('header.create')}</CommonActiveableA>
+          </div>
+          <img src={logoImage} alt="" className="logo" />
+          <div className="opt">
+            {maskedAddress && address ? (
+              <>
+                <a className="learn" onClick={signout}>
+                  {t('header.disconnect')}
+                </a>
+                <CopyToClipboard
+                  text={address}
+                  onCopy={() => message.success(t('copy'))}
+                >
+                  <a className="connect">{maskedAddress}</a>
+                </CopyToClipboard>
+              </>
+            ) : (
+              <a className="connect" onClick={login}>
+                {t('header.connect')}
               </a>
-              <CopyToClipboard
-                text={address}
-                onCopy={() => message.success(t('copy'))}
-              >
-                <a className="connect">{maskedAddress}</a>
-              </CopyToClipboard>
-            </>
-          ) : (
-            <a className="connect" onClick={login}>
-              {t('header.connect')}
-            </a>
-          )}
+            )}
+          </div>
         </div>
-      </div>
-    </header>
+      </header>
+    </>
   )
 }
 

@@ -33,6 +33,14 @@ export interface NftData {
   exercisedAtBlock?: number
 }
 
+export interface RecnetFixData {
+  tid: number
+  sentence: {
+    en: string
+    zh: string
+  }
+}
+
 export class ServerWalletAPI {
   private readonly axios: AxiosInstance
 
@@ -67,6 +75,11 @@ export class ServerWalletAPI {
   ): Promise<any> {
     const url = `/add/${rarity}/${tid}`
     return await axios.post<any>(url, { words, sig }).then((resp) => resp.data)
+  }
+
+  async getRecnetFix(): Promise<RecnetFixData[]> {
+    const url = '/fix/recent'
+    return await axios.get(url).then((resp) => resp.data)
   }
 }
 
