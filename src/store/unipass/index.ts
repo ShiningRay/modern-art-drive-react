@@ -161,6 +161,10 @@ function useUnipass(): useUnipassProps {
     async (message: string, label: string, args: any = []) => {
       if (!pubkey) return
       const messageHash = toHex(message)
+      console.log('sign:')
+      console.log(message)
+      console.log('get:')
+      console.log(messageHash)
       const successUrl = generateSuccessUrl('sign', { label, args })
       const url = generateUnipassNewUrl(UNIPASS_URL, 'sign', {
         success_url: successUrl,

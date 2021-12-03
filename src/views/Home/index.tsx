@@ -274,8 +274,15 @@ export const Home: React.FC = () => {
       })
       .then(() => {
         if (waitingSign) {
-          const label = waitingSign.args.label
+          const label = waitingSign.args.label as string
           const args = waitingSign.args.args
+          console.log('get callback:')
+          console.log(`  type: ${label}`)
+          console.log('  args:')
+          console.log(args)
+          console.log('  data:')
+          console.log(waitingSign.data)
+
           if (label === 'fix') {
             return serverWalletAPI
               .fixNft(args[0], args[1], waitingSign.data.sig)
