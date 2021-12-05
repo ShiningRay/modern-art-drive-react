@@ -10,7 +10,11 @@ import serverWalletAPI, {
 import CommonModal, { CommonModalProps } from '../../components/CommonModal'
 import message from '../../components/CommonMessage'
 import './style.scss'
-import { PushpinOutlined, PlusSquareOutlined } from '@ant-design/icons'
+import {
+  PushpinOutlined,
+  PlusSquareOutlined,
+  RedoOutlined,
+} from '@ant-design/icons'
 
 interface NftFixModalProps extends CommonModalProps {
   data: NftData | null
@@ -224,9 +228,15 @@ interface NftCardProps {
   data: NftData
   onFix: (data: NftData) => void
   onAddWord: (data: NftData) => void
+  onRefresh: (data: NftData) => void
 }
 
-const NftCard: React.FC<NftCardProps> = ({ data, onFix, onAddWord }) => {
+const NftCard: React.FC<NftCardProps> = ({
+  data,
+  onFix,
+  onAddWord,
+  onRefresh,
+}) => {
   const [loading, setLoading] = useState(true)
   const url = useMemo(() => serverWalletAPI.getImageUrl(data), [data])
 
@@ -243,7 +253,12 @@ const NftCard: React.FC<NftCardProps> = ({ data, onFix, onAddWord }) => {
       <div className="tid">
         <span>#{data.tid}</span>
         <span>
-          {!data.fixed && <PushpinOutlined onClick={() => onFix(data)} />}
+          {!data.fixed && (
+            <>
+              <RedoOutlined onClick={() => onRefresh(data)} />
+              <PushpinOutlined onClick={() => onFix(data)} />
+            </>
+          )}
           {!data.exercised && (
             <PlusSquareOutlined onClick={() => onAddWord(data)} />
           )}
@@ -304,6 +319,15 @@ export const Home: React.FC = () => {
               })
               .then(async () => await serverWalletAPI.getNfts(address))
               .then(setNfts)
+          } else if (label === 'refresh') {
+            return serverWalletAPI
+              .refreshNft(args[0], args[1], waitingSign.data.sig)
+              .then(() => {
+                message.success('refresh success')
+                setWaitingSign(null)
+              })
+              .then(async () => await serverWalletAPI.getNfts(address))
+              .then(setNfts)
           }
         }
       })
@@ -324,6 +348,13 @@ export const Home: React.FC = () => {
     const message = `Fix ${data.class.rarity} #${data.tid}`
     sign(message, 'fix', [data.class.rarity, data.tid.toString()]).catch((e) =>
       console.log(e)
+    )
+  }
+
+  const handleRefresh = (data: NftData): void => {
+    const message = `Refresh ${data.class.rarity} #${data.tid}`
+    sign(message, 'refresh', [data.class.rarity, data.tid.toString()]).catch(
+      (e) => console.log(e)
     )
   }
 
@@ -348,6 +379,7 @@ export const Home: React.FC = () => {
                 key={i}
                 onFix={handleFix}
                 onAddWord={handleAddWord}
+                onRefresh={handleRefresh}
               />
             ))}
           </div>

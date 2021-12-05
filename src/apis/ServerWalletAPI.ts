@@ -81,6 +81,15 @@ export class ServerWalletAPI {
     const url = '/fix/recent'
     return await axios.get(url).then((resp) => resp.data)
   }
+
+  async refreshNft(
+    rarity: string | number,
+    tid: string | number,
+    sig: string
+  ): Promise<any> {
+    const url = `/refresh/${rarity}/${tid}`
+    return await axios.post<any>(url, { sig }).then((resp) => resp.data)
+  }
 }
 
 const serverWalletAPI = new ServerWalletAPI()
