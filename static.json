@@ -15,6 +15,9 @@
     },
     "/add/": {
       "origin": "https://mad.internal.nervina.cn/add/"
+    },
+    "/refresh/": {
+      "origin": "https://mad.internal.nervina.cn/refresh/"
     }
   }
 }
