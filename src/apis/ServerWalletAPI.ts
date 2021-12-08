@@ -31,6 +31,8 @@ export interface NftData {
   exercised: boolean
   exercisedAt?: string
   exercisedAtBlock?: number
+  refreshedAt?: string
+  refreshedAtBlock?: number
 }
 
 export interface RecnetFixData {
@@ -54,7 +56,7 @@ export class ServerWalletAPI {
   }
 
   getImageUrl(nft: NftData): string {
-    const url = `/renderer/${nft.class.rarity}.png?tid=${nft.tid}`
+    const url = `/renderer/${nft.class.rarity}.png?tid=${nft.tid}&_=${nft.refreshedAtBlock}`
     return url
   }
 
