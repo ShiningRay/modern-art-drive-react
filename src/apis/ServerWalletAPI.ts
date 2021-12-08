@@ -56,7 +56,11 @@ export class ServerWalletAPI {
   }
 
   getImageUrl(nft: NftData): string {
-    const url = `/renderer/${nft.class.rarity}.png?tid=${nft.tid}&_=${String(nft.refreshedAtBlock)}`
+    const { tid, refreshedAtBlock } = nft
+    const url = `/renderer/${nft.class.rarity}.png?tid=${tid}&_=${String(
+      refreshedAtBlock
+    )}`
+
     return url
   }
 
