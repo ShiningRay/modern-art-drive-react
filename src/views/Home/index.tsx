@@ -15,6 +15,7 @@ import {
   PlusSquareOutlined,
   RedoOutlined,
 } from '@ant-design/icons'
+import { sleep } from '../../utils'
 
 interface NftFixModalProps extends CommonModalProps {
   data: NftData | null
@@ -85,25 +86,27 @@ const NftAddWrodModal: React.FC<NftAddWordModalProps> = ({
     if (rest.visible && data) {
       const defaultWords: NftWordData[] = []
       const defaultErrors: NftWordErr[] = []
-      switch (data.class.rarity) {
-        case 'common':
-          defaultWords.push(getDefaultWord())
-          defaultErrors.push(getDefaultWordErr())
-          break
-        case 'rare':
-          defaultWords.push(getDefaultWord())
-          defaultWords.push(getDefaultWord())
-          defaultErrors.push(getDefaultWordErr())
-          defaultErrors.push(getDefaultWordErr())
-          break
-        case 'epic':
-          defaultWords.push(getDefaultWord())
-          defaultWords.push(getDefaultWord())
-          defaultWords.push(getDefaultWord())
-          defaultErrors.push(getDefaultWordErr())
-          defaultErrors.push(getDefaultWordErr())
-          defaultErrors.push(getDefaultWordErr())
-      }
+      // switch (data.class.rarity) {
+      //   case 'common':
+      //     defaultWords.push(getDefaultWord())
+      //     defaultErrors.push(getDefaultWordErr())
+      //     break
+      //   case 'rare':
+      //     defaultWords.push(getDefaultWord())
+      //     defaultWords.push(getDefaultWord())
+      //     defaultErrors.push(getDefaultWordErr())
+      //     defaultErrors.push(getDefaultWordErr())
+      //     break
+      //   case 'epic':
+      //     defaultWords.push(getDefaultWord())
+      //     defaultWords.push(getDefaultWord())
+      //     defaultWords.push(getDefaultWord())
+      //     defaultErrors.push(getDefaultWordErr())
+      //     defaultErrors.push(getDefaultWordErr())
+      //     defaultErrors.push(getDefaultWordErr())
+      // }
+      defaultWords.push(getDefaultWord())
+      defaultErrors.push(getDefaultWordErr())
       setWords(defaultWords)
       setErrors(defaultErrors)
     }
@@ -173,7 +176,7 @@ const NftAddWrodModal: React.FC<NftAddWordModalProps> = ({
         {words.map((word, i) => (
           <div className="new-word" key={i}>
             <div className="title">
-              <span>New Word {i + 1}</span>
+              <span>New Word</span>
               <select
                 value={word.position}
                 onChange={(e) =>
@@ -305,28 +308,37 @@ export const Home: React.FC = () => {
             return serverWalletAPI
               .fixNft(args[0], args[1], waitingSign.data.sig)
               .then(() => {
-                message.success('fix success')
+                message.success('fix success, update at 3s.')
                 setWaitingSign(null)
               })
-              .then(async () => await serverWalletAPI.getNfts(address))
+              .then(async () => {
+                await sleep(3000)
+                return await serverWalletAPI.getNfts(address)
+              })
               .then(setNfts)
           } else if (label === 'addwords') {
             return serverWalletAPI
               .addWords(args[0], args[1], args[2], waitingSign.data.sig)
               .then(() => {
-                message.success('add words success')
+                message.success('add words success, update at 3s.')
                 setWaitingSign(null)
               })
-              .then(async () => await serverWalletAPI.getNfts(address))
+              .then(async () => {
+                await sleep(3000)
+                return await serverWalletAPI.getNfts(address)
+              })
               .then(setNfts)
           } else if (label === 'refresh') {
             return serverWalletAPI
               .refreshNft(args[0], args[1], waitingSign.data.sig)
               .then(() => {
-                message.success('refresh success')
+                message.success('refresh success, update at 3s.')
                 setWaitingSign(null)
               })
-              .then(async () => await serverWalletAPI.getNfts(address))
+              .then(async () => {
+                await sleep(3000)
+                return await serverWalletAPI.getNfts(address)
+              })
               .then(setNfts)
           }
         }
