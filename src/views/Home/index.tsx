@@ -375,9 +375,10 @@ export const Home: React.FC = () => {
     console.log(raw)
     console.log('签名结果：')
     console.log(signedMessage)
-    // sign(message, 'refresh', [data.class.rarity, data.tid.toString()]).catch(
-    //   (e) => console.log(e)
-    // )
+    sign(signedMessage, 'refresh_new', [
+      data.class.rarity,
+      data.tid.toString(),
+    ]).catch((e) => console.log(e))
   }
 
   const handleAddWordOk = (data: NftData, words: NftWordData[]): void => {

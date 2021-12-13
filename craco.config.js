@@ -13,7 +13,7 @@ module.exports = {
           (i) => i.constructor.name === 'TerserPlugin'
         )
         if (TerserPlugin) {
-          TerserPlugin.options.terserOptions.compress.drop_console = true
+          TerserPlugin.options.terserOptions.compress.drop_console = false
         }
         // public path
         // webpackConfig.output.publicPath = '//assets.zjzsxhy.com/mad/'
