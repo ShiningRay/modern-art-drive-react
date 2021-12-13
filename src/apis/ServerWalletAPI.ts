@@ -96,6 +96,14 @@ export class ServerWalletAPI {
     const url = `/refresh/${rarity}/${tid}`
     return await axios.post<any>(url, { sig }).then((resp) => resp.data)
   }
+
+  async getRefreshGen(
+    rarity: string | number,
+    tid: string | number
+  ): Promise<any> {
+    const url = `/gen/refresh/${rarity}/${tid}`
+    return await axios.get<any>(url).then((resp) => resp.data)
+  }
 }
 
 const serverWalletAPI = new ServerWalletAPI()

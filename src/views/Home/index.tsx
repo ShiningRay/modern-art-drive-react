@@ -276,7 +276,8 @@ export const Home: React.FC = () => {
   const [addWordModalVisible, showAddWordModal] = useState(false)
   const [nfts, setNfts] = useState<NftData[]>([])
   const [data, setData] = useState<NftData | null>(null)
-  const { address, sign, waitingSign, setWaitingSign } = Unipass.useContainer()
+  const { address, sign, waitingSign, setWaitingSign, signTx } =
+    Unipass.useContainer()
 
   useEffect(() => {
     if (!address) {
@@ -363,11 +364,20 @@ export const Home: React.FC = () => {
     )
   }
 
-  const handleRefresh = (data: NftData): void => {
-    const message = `Refresh ${data.class.rarity} #${data.tid}`
-    sign(message, 'refresh', [data.class.rarity, data.tid.toString()]).catch(
-      (e) => console.log(e)
+  const handleRefresh = async (data: NftData): Promise<void> => {
+    // const message = `Refresh ${data.class.rarity} #${data.tid}`
+    const raw = await serverWalletAPI.getRefreshGen(
+      data.class.rarity,
+      data.tid.toString()
     )
+    const signedMessage = await signTx(raw)
+    console.log('签名Object：')
+    console.log(raw)
+    console.log('签名结果：')
+    console.log(signedMessage)
+    // sign(message, 'refresh', [data.class.rarity, data.tid.toString()]).catch(
+    //   (e) => console.log(e)
+    // )
   }
 
   const handleAddWordOk = (data: NftData, words: NftWordData[]): void => {

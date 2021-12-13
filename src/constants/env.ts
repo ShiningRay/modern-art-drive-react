@@ -16,5 +16,7 @@ export const CKB_CHAIN_ID = envArg(
   'CKB_CHAIN_ID',
   ChainID.ckb_testnet.toString()
 )
+export const IS_MAINNET: boolean =
+  CKB_CHAIN_ID !== ChainID.ckb_testnet.toString()
 // unipass
 export const UNIPASS_URL = envArg('UNIPASS_URL', 'https://t.unipass.xyz')

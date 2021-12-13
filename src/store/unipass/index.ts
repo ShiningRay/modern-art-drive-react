@@ -8,6 +8,7 @@ import {
 } from '../../constants'
 import PWCore, { IndexerCollector, Provider } from '@lay2/pw-core'
 import UnipassProvider from './UnipassProvider'
+import UnipassSigner from './UnipassSigner'
 import { useLocalStorage } from '../../hooks/useLocalStorage'
 
 function generateUnipassNewUrl(
@@ -70,6 +71,7 @@ export interface useUnipassProps {
   waitingSign: WaitingSign | null
   setWaitingSign: (waitingSign: WaitingSign | null) => void
   signout: () => void
+  signTx: (raw: any) => Promise<any>
 }
 
 export interface unipassLoginData {
@@ -176,6 +178,12 @@ function useUnipass(): useUnipassProps {
     [pubkey]
   )
 
+  const signTx = useCallback(async (raw: any) => {
+    const signer = new UnipassSigner()
+    const [signedTx] = await signer.toMessages(raw)
+    return signedTx.message as any
+  }, [])
+
   useEffect((): void => {
     // 尝试登录
     if (new Date(parseInt(limitTime)) > new Date()) {
@@ -194,6 +202,7 @@ function useUnipass(): useUnipassProps {
     setWaitingSign,
     sign,
     signout,
+    signTx,
   }
 }
 

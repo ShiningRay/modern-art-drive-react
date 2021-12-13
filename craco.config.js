@@ -28,6 +28,11 @@ module.exports = {
   },
   devServer: {
     proxy: {
+      '/gen/*': {
+        target: 'https://mad.internal.nervina.cn/',
+        changeOrigin: true,
+        secure: false,
+      },
       '/nfts/*': {
         target: 'https://mad.internal.nervina.cn/',
         changeOrigin: true,

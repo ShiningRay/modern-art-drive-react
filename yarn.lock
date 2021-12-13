@@ -1758,10 +1758,10 @@
     "@types/yargs" "^15.0.0"
     chalk "^4.0.0"
 
-"@lay2/pw-core@^0.4.0-alpha.8":
-  version "0.4.0-alpha.11"
-  resolved "https://registry.yarnpkg.com/@lay2/pw-core/-/pw-core-0.4.0-alpha.11.tgz#f8d5005b5824d44dc84b517607cabe57f05938f1"
-  integrity sha512-ciwJCyheAMOeHG3y0rRYcD2H3Qr3pTQeHUVb/pVkaHyIMK8LI7ur/CaRximwlNFbpHfOQ2MyC2d8gD4OS61Gcg==
+"@lay2/pw-core@^0.4.0-alpha.12":
+  version "0.4.0-alpha.12"
+  resolved "https://registry.yarnpkg.com/@lay2/pw-core/-/pw-core-0.4.0-alpha.12.tgz#6ee432bea6ed84811abec822b240fedc411573e3"
+  integrity sha512-3TJkRx5W+Dr+OFxKUGwgoN949LloVIA9TQUsPnQ4GCGdrj87s0mWMi/gnr74nBr5RJayPfOFY7oBfRTschCRrg==
   dependencies:
     "@nervosnetwork/ckb-sdk-utils" "^0.41.1"
     "@scatterjs/core" "^2.7.53"
