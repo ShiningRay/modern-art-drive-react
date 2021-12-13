@@ -18,6 +18,9 @@
     },
     "/refresh/": {
       "origin": "https://mad.internal.nervina.cn/refresh/"
+    },
+    "/gen/": {
+      "origin": "https://mad.internal.nervina.cn/gen/"
     }
   }
 }
