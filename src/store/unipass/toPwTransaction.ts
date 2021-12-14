@@ -10,32 +10,29 @@ import {
   Transaction,
   Amount,
   AmountUnit,
-  Builder,
-  CHAIN_SPECS,
   RPC as ToolKitRpc,
 } from '@lay2/pw-core'
 import RPC from '@nervosnetwork/ckb-sdk-rpc'
-import { IS_MAINNET, CKB_NODE_URL } from '../../constants'
-
-const chainSpec = IS_MAINNET ? CHAIN_SPECS.Lina : CHAIN_SPECS.Aggron
-
-const pwDeps = [chainSpec.defaultLock.cellDep, chainSpec.pwLock.cellDep]
+import { CKB_NODE_URL } from '../../constants'
 
 export const toolkitRPC = new ToolKitRpc(CKB_NODE_URL)
 
-// const Secp256R1BinOutPoint = new OutPoint(
-//   '0x9687ac5e311d009df1505459afc83a55c46496eb292fc11e4f6c24df5dfd4de5',
-//   '0x0'
-// )
-const UnipassWitnessArgs = {
-  lock: '0x' + '0'.repeat(2082),
-  input_type: '',
-  output_type: '',
+interface UnipassWitnessArgs {
+  lock: string
+  input_type: string
+  output_type: string
+}
+
+function getUnipassWitnessArgs(inputType: string): UnipassWitnessArgs {
+  return {
+    lock: '0x' + '0'.repeat(2082),
+    input_type: inputType,
+    output_type: '',
+  }
 }
 
 export default async function rawTransactionToPWTransaction(
-  rawTx: RPC.RawTransaction,
-  isUnipass = true
+  rawTx: RPC.RawTransaction
 ): Promise<Transaction> {
   const [input]: any[] = rawTx.inputs
   const inputs = input.lock == null && input.type == null ? await Promise.all(
@@ -79,20 +76,17 @@ export default async function rawTransactionToPWTransaction(
       )
   )
 
+  const arg = getUnipassWitnessArgs(rawTx.witnesses[0])
   const tx = new Transaction(
     new RawTransaction(
       inputs,
       outputs,
-      cellDeps.concat(!isUnipass ? pwDeps : [])
+      cellDeps
       // rawTx.header_deps,
       // rawTx.version
     ),
     [
-      !isUnipass
-        ? IS_MAINNET
-          ? Builder.WITNESS_ARGS.RawSecp256k1
-          : Builder.WITNESS_ARGS.Secp256k1
-        : UnipassWitnessArgs,
+      arg
     ]
   )
 
