@@ -17,11 +17,11 @@ import { CKB_NODE_URL } from '../../constants'
 
 export const toolkitRPC = new ToolKitRpc(CKB_NODE_URL)
 
-interface UnipassWitnessArgs {
-  lock: string
-  input_type: string
-  output_type: string
-}
+// interface UnipassWitnessArgs {
+//   lock: string
+//   input_type: string
+//   output_type: string
+// }
 
 // function getUnipassWitnessArgs(inputType: string): UnipassWitnessArgs {
 //   return {
