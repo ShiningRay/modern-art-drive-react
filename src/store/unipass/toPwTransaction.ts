@@ -23,13 +23,13 @@ interface UnipassWitnessArgs {
   output_type: string
 }
 
-function getUnipassWitnessArgs(inputType: string): UnipassWitnessArgs {
-  return {
-    lock: '0x' + '0'.repeat(2082),
-    input_type: inputType,
-    output_type: '',
-  }
-}
+// function getUnipassWitnessArgs(inputType: string): UnipassWitnessArgs {
+//   return {
+//     lock: '0x' + '0'.repeat(2082),
+//     input_type: inputType,
+//     output_type: '',
+//   }
+// }
 
 export default async function rawTransactionToPWTransaction(
   rawTx: RPC.RawTransaction
