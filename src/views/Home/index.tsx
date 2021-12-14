@@ -298,11 +298,11 @@ export const Home: React.FC = () => {
         if (waitingSign) {
           const label = waitingSign.args.label as string
           const args = waitingSign.args.args
-          console.log('get callback:')
+          console.log('get unipass callback:')
           console.log(`  type: ${label}`)
           console.log('  args:')
           console.log(args)
-          console.log('  data:')
+          console.log('  unipass data:')
           console.log(waitingSign.data)
 
           if (label === 'fix') {
@@ -330,6 +330,18 @@ export const Home: React.FC = () => {
               })
               .then(setNfts)
           } else if (label === 'refresh') {
+            return serverWalletAPI
+              .refreshNft(args[0], args[1], waitingSign.data.sig)
+              .then(() => {
+                message.success('refresh success, update at 3s.')
+                setWaitingSign(null)
+              })
+              .then(async () => {
+                await sleep(3000)
+                return await serverWalletAPI.getNfts(address)
+              })
+              .then(setNfts)
+          } else if (label === 'refresh_new') {
             return serverWalletAPI
               .refreshNft(args[0], args[1], waitingSign.data.sig)
               .then(() => {
