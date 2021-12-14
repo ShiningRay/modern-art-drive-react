@@ -76,7 +76,7 @@ export default async function rawTransactionToPWTransaction(
       )
   )
 
-  const arg = getUnipassWitnessArgs(rawTx.witnesses[0])
+  // const arg = getUnipassWitnessArgs([0])
   const tx = new Transaction(
     new RawTransaction(
       inputs,
@@ -85,9 +85,7 @@ export default async function rawTransactionToPWTransaction(
       // rawTx.header_deps,
       // rawTx.version
     ),
-    [
-      arg
-    ]
+    rawTx.witnesses
   )
 
   return tx
