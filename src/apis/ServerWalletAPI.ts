@@ -102,7 +102,21 @@ export class ServerWalletAPI {
     tid: string | number
   ): Promise<any> {
     const url = `/gen/refresh/${rarity}/${tid}`
-    return await axios.get<any>(url).then((resp) => resp.data)
+    return await axios.post<any>(url).then((resp) => resp.data)
+  }
+
+  async getFixGen(rarity: string | number, tid: string | number): Promise<any> {
+    const url = `/gen/fix/${rarity}/${tid}`
+    return await axios.post<any>(url).then((resp) => resp.data)
+  }
+
+  async getAddWordsGen(
+    rarity: string | number,
+    tid: string | number,
+    words: NftWordData[]
+  ): Promise<any> {
+    const url = `/gen/add/${rarity}/${tid}`
+    return await axios.post<any>(url, { words }).then((resp) => resp.data)
   }
 }
 

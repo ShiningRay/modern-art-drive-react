@@ -341,18 +341,6 @@ export const Home: React.FC = () => {
                 return await serverWalletAPI.getNfts(address)
               })
               .then(setNfts)
-          } else if (label === 'refresh_new') {
-            return serverWalletAPI
-              .refreshNft(args[0], args[1], waitingSign.data.sig)
-              .then(() => {
-                message.success('refresh success, update at 3s.')
-                setWaitingSign(null)
-              })
-              .then(async () => {
-                await sleep(3000)
-                return await serverWalletAPI.getNfts(address)
-              })
-              .then(setNfts)
           }
         }
       })
@@ -369,15 +357,22 @@ export const Home: React.FC = () => {
     showAddWordModal(true)
   }
 
-  const handleFixOk = (data: NftData): void => {
-    const message = `Fix ${data.class.rarity} #${data.tid}`
-    sign(message, 'fix', [data.class.rarity, data.tid.toString()]).catch((e) =>
-      console.log(e)
+  const handleFixOk = async (data: NftData): Promise<void> => {
+    const raw = await serverWalletAPI.getFixGen(
+      data.class.rarity,
+      data.tid.toString()
+    )
+    const signedMessage = await signTx(raw)
+    console.log('签名Object：')
+    console.log(raw)
+    console.log('签名结果：')
+    console.log(signedMessage)
+    sign(signedMessage, 'fix', [data.class.rarity, data.tid.toString()]).catch(
+      (e) => console.log(e)
     )
   }
 
   const handleRefresh = async (data: NftData): Promise<void> => {
-    // const message = `Refresh ${data.class.rarity} #${data.tid}`
     const raw = await serverWalletAPI.getRefreshGen(
       data.class.rarity,
       data.tid.toString()
@@ -387,15 +382,27 @@ export const Home: React.FC = () => {
     console.log(raw)
     console.log('签名结果：')
     console.log(signedMessage)
-    sign(signedMessage, 'refresh_new', [
+    sign(signedMessage, 'refresh', [
       data.class.rarity,
       data.tid.toString(),
     ]).catch((e) => console.log(e))
   }
 
-  const handleAddWordOk = (data: NftData, words: NftWordData[]): void => {
-    const message = `Add ${words.length} words to ${data.class.rarity} via #${data.tid}`
-    sign(message, 'addwords', [
+  const handleAddWordOk = async (
+    data: NftData,
+    words: NftWordData[]
+  ): Promise<void> => {
+    const raw = await serverWalletAPI.getAddWordsGen(
+      data.class.rarity,
+      data.tid.toString(),
+      words
+    )
+    const signedMessage = await signTx(raw)
+    console.log('签名Object：')
+    console.log(raw)
+    console.log('签名结果：')
+    console.log(signedMessage)
+    sign(signedMessage, 'addwords', [
       data.class.rarity,
       data.tid.toString(),
       words,
