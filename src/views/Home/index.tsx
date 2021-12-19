@@ -14,24 +14,32 @@ import {
   PushpinOutlined,
   PlusSquareOutlined,
   RedoOutlined,
+  LoadingOutlined,
 } from '@ant-design/icons'
 import { sleep } from '../../utils'
 
-interface NftFixModalProps extends CommonModalProps {
+interface NftComfirmModalProps extends CommonModalProps {
   data: NftData | null
   onOk: (data: NftData) => void
+  text: string
+  loading: boolean
 }
 interface NftAddWordModalProps extends CommonModalProps {
   data: NftData | null
   onOk: (data: NftData, words: NftWordData[]) => void
+  loading: boolean
 }
 
-const NftFixModal: React.FC<NftFixModalProps> = ({ data, onOk, ...rest }) => {
+const NftComfirmModal: React.FC<NftComfirmModalProps> = ({
+  data,
+  onOk,
+  text,
+  loading,
+  ...rest
+}) => {
   if (!data) {
     return <></>
   }
-
-  const { tid } = data
 
   const handleOk = (): void => {
     if (!data) return
@@ -39,13 +47,15 @@ const NftFixModal: React.FC<NftFixModalProps> = ({ data, onOk, ...rest }) => {
   }
 
   return (
-    <CommonModal {...rest} title={`Fix #${tid}`} className="nft-fix-modal">
+    <CommonModal {...rest} className="nft-fix-modal">
       <div className="content">
-        <div className="desc">Are you sure to fix this nft?</div>
+        <div className="desc">{text}</div>
         <div className="opts">
-          <button onClick={handleOk}>Yes</button>
-          <button className="cancel" onClick={rest.onClose}>
-            Cancel
+          <button disabled={loading} onClick={handleOk}>
+            {loading ? <LoadingOutlined /> : 'Yes'}
+          </button>
+          <button disabled={loading} className="cancel" onClick={rest.onClose}>
+            {loading ? <LoadingOutlined /> : 'Cancel'}
           </button>
         </div>
       </div>
@@ -77,6 +87,7 @@ interface NftWordErr {
 const NftAddWrodModal: React.FC<NftAddWordModalProps> = ({
   data,
   onOk,
+  loading,
   ...rest
 }) => {
   const [words, setWords] = useState<NftWordData[]>([])
@@ -217,9 +228,11 @@ const NftAddWrodModal: React.FC<NftAddWordModalProps> = ({
           </div>
         ))}
         <div className="opts">
-          <button onClick={handleOk}>Yes</button>
-          <button className="cancel" onClick={rest.onClose}>
-            Cancel
+          <button disabled={loading} onClick={handleOk}>
+            {loading ? <LoadingOutlined /> : 'Yes'}
+          </button>
+          <button disabled={loading} className="cancel" onClick={rest.onClose}>
+            {loading ? <LoadingOutlined /> : 'Cancel'}
           </button>
         </div>
       </div>
@@ -274,6 +287,8 @@ const NftCard: React.FC<NftCardProps> = ({
 export const Home: React.FC = () => {
   const [fixModalVisible, showFixModal] = useState(false)
   const [addWordModalVisible, showAddWordModal] = useState(false)
+  const [refreshModalVisible, showRefreshModal] = useState(false)
+  const [submitting, setSubmitting] = useState(false)
   const [nfts, setNfts] = useState<NftData[]>([])
   const [data, setData] = useState<NftData | null>(null)
   const { address, sign, waitingSign, setWaitingSign, signTx } =
@@ -357,7 +372,13 @@ export const Home: React.FC = () => {
     showAddWordModal(true)
   }
 
+  const handleRefresh = (data: NftData): void => {
+    setData(data)
+    showRefreshModal(true)
+  }
+
   const handleFixOk = async (data: NftData): Promise<void> => {
+    setSubmitting(true)
     const raw = await serverWalletAPI.getFixGen(
       data.class.rarity,
       data.tid.toString()
@@ -372,7 +393,8 @@ export const Home: React.FC = () => {
     )
   }
 
-  const handleRefresh = async (data: NftData): Promise<void> => {
+  const handleRefreshOk = async (data: NftData): Promise<void> => {
+    setSubmitting(true)
     const raw = await serverWalletAPI.getRefreshGen(
       data.class.rarity,
       data.tid.toString()
@@ -392,6 +414,7 @@ export const Home: React.FC = () => {
     data: NftData,
     words: NftWordData[]
   ): Promise<void> => {
+    setSubmitting(true)
     const raw = await serverWalletAPI.getAddWordsGen(
       data.class.rarity,
       data.tid.toString(),
@@ -432,17 +455,30 @@ export const Home: React.FC = () => {
           )}
         </div>
       </div>
-      <NftFixModal
+      <NftComfirmModal
         data={data}
         visible={fixModalVisible && !!data}
         onClose={() => showFixModal(false)}
         onOk={handleFixOk}
+        text="Are you sure to fix this nft?"
+        title={`Fix #${data ? data.tid : ''}`}
+        loading={submitting}
+      />
+      <NftComfirmModal
+        data={data}
+        visible={refreshModalVisible && !!data}
+        onClose={() => showRefreshModal(false)}
+        onOk={handleRefreshOk}
+        text="Are you sure to refresh this nft?"
+        title={`Refresh #${data ? data.tid : ''}`}
+        loading={submitting}
       />
       <NftAddWrodModal
         data={data}
         visible={addWordModalVisible && !!data}
         onClose={() => showAddWordModal(false)}
         onOk={handleAddWordOk}
+        loading={submitting}
       />
     </>
   )

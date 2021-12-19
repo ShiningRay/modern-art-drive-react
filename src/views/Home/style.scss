@@ -82,6 +82,9 @@
         background-color: #D6D2C4;
         color: #000;
       }
+      &:disabled {
+        opacity: 0.5;
+      }
     }
   }
 }
@@ -165,6 +168,9 @@
       color: #fff;
       border: none;
 
+      &:disabled {
+        opacity: 0.5;
+      }
       &.cancel {
         background-color: #D6D2C4;
         color: #000;
