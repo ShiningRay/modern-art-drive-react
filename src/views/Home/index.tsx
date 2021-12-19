@@ -194,9 +194,9 @@ const NftAddWrodModal: React.FC<NftAddWordModalProps> = ({
                   handleChangePosition(i, e.target.value as NftWordDataPosition)
                 }
               >
-                <option value="noun">noun.</option>
-                <option value="verb">verb.</option>
-                <option value="adjective">adjective.</option>
+                <option value="verb">Position 1</option>
+                <option value="adjective">Position 2</option>
+                <option value="noun">Position 3</option>
               </select>
             </div>
             <div className="inputs">
