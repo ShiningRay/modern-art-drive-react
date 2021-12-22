@@ -65,7 +65,7 @@ const zhReg = /^[\u4e00-\u9fa5]{0,5}$/
 const enReg = /^[a-zA-Z]{0,10}$/
 function getDefaultWord(): NftWordData {
   return {
-    position: 'noun',
+    position: 'verb',
     content: {
       en: '',
       zh: '',
@@ -186,16 +186,28 @@ const NftAddWrodModal: React.FC<NftAddWordModalProps> = ({
           <div className="new-word" key={i}>
             <div className="title">
               <span>New Word</span>
-              <select
-                value={word.position}
-                onChange={(e) =>
-                  handleChangePosition(i, e.target.value as NftWordDataPosition)
-                }
+            </div>
+            <div className="radio">
+              <div
+                className={classnames({ active: word.position === 'verb' })}
+                onClick={() => handleChangePosition(i, 'verb')}
               >
-                <option value="verb">Position 1</option>
-                <option value="adjective">Position 2</option>
-                <option value="noun">Position 3</option>
-              </select>
+                Front Word(verb.)
+              </div>
+              <div
+                className={classnames({
+                  active: word.position === 'adjective',
+                })}
+                onClick={() => handleChangePosition(i, 'adjective')}
+              >
+                Middle Word(adj.)
+              </div>
+              <div
+                className={classnames({ active: word.position === 'noun' })}
+                onClick={() => handleChangePosition(i, 'noun')}
+              >
+                Last Word(noun.)
+              </div>
             </div>
             <div className="inputs">
               <div

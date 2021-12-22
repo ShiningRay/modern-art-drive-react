@@ -156,6 +156,33 @@
       }
     }
 
+    .radio {
+      margin-bottom: 12px;
+      cursor: pointer;
+
+      &>div {
+        &::before {
+          content: "";
+          display: inline-block;
+          height: 10px;
+          width: 10px;
+          vertical-align: middle;
+          border: #777 solid 1px;
+          background-color: transparent;
+          margin-right: 6px;
+        }
+
+        &:hover::before {
+          background-color: #777;
+        }
+        &.active::before {
+          border-color: #000;
+          background-color: #000;
+        }
+      }
+
+    }
+
     .inputs {
       display: flex;
       column-gap: 12px;
