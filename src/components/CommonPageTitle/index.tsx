@@ -1,14 +1,21 @@
 import React from 'react'
 import './style.scss'
 
-const CommonPageTitle: React.FC<{ lines: string[] }> = ({ lines }) => {
+interface CommonPageTitleProps {
+  title: string
+  subTitle: string
+  size?: '1' | '2'
+}
+
+const CommonPageTitle: React.FC<CommonPageTitleProps> = ({
+  title,
+  subTitle,
+  size = '1',
+}) => {
   return (
-    <div className="common-page-title">
-      <div className="container">
-        {lines.map((line, i) => (
-          <div key={i}>{line}</div>
-        ))}
-      </div>
+    <div className={`common-page-title size-${size}`}>
+      <span>{title}</span>
+      <span>{subTitle}</span>
     </div>
   )
 }

@@ -20,13 +20,13 @@ import { sleep } from '../../utils'
 
 interface NftComfirmModalProps extends CommonModalProps {
   data: NftData | null
-  onOk: (data: NftData) => void
+  onOk: () => void
   text: string
   loading: boolean
 }
 interface NftAddWordModalProps extends CommonModalProps {
   data: NftData | null
-  onOk: (data: NftData, words: NftWordData[]) => void
+  onOk: (words: NftWordData[]) => void
   loading: boolean
 }
 
@@ -43,7 +43,7 @@ const NftComfirmModal: React.FC<NftComfirmModalProps> = ({
 
   const handleOk = (): void => {
     if (!data) return
-    onOk(data)
+    onOk()
   }
 
   return (
@@ -178,7 +178,7 @@ const NftAddWrodModal: React.FC<NftAddWordModalProps> = ({
     if (!data) return
     const result = handleCheck()
     if (!result) return
-    onOk(data, words)
+    onOk(words)
   }
 
   return (
@@ -242,17 +242,10 @@ const NftAddWrodModal: React.FC<NftAddWordModalProps> = ({
 
 interface NftCardProps {
   data: NftData
-  onFix: (data: NftData) => void
-  onAddWord: (data: NftData) => void
-  onRefresh: (data: NftData) => void
+  onSelectCard?: (data: NftData) => void
 }
 
-const NftCard: React.FC<NftCardProps> = ({
-  data,
-  onFix,
-  onAddWord,
-  onRefresh,
-}) => {
+const NftCard: React.FC<NftCardProps> = ({ data, onSelectCard }) => {
   const [loading, setLoading] = useState(true)
   const url = useMemo(() => serverWalletAPI.getImageUrl(data), [data])
 
@@ -261,24 +254,88 @@ const NftCard: React.FC<NftCardProps> = ({
   }
 
   return (
-    <div className="nft-card">
+    <div className="nft-card" onClick={() => onSelectCard?.(data)}>
       <div className="img">
         <img src={url} alt="" onLoad={handleLoad} />
         {loading && <div className="loading">Loading...</div>}
       </div>
       <div className="tid">
         <span>#{data.tid}</span>
-        <span>
-          {!data.fixed && (
-            <>
-              <RedoOutlined onClick={() => onRefresh(data)} />
-              <PushpinOutlined onClick={() => onFix(data)} />
-            </>
-          )}
-          {!data.exercised && (
-            <PlusSquareOutlined onClick={() => onAddWord(data)} />
-          )}
-        </span>
+      </div>
+    </div>
+  )
+}
+
+interface CurrentNftCardProps {
+  data: NftData | null
+  onFix: (data: NftData) => void
+  onAddWord: (data: NftData) => void
+  onRefresh: (data: NftData) => void
+}
+
+const CurrentNftCard: React.FC<CurrentNftCardProps> = ({
+  data,
+  onFix,
+  onAddWord,
+  onRefresh,
+}) => {
+  const [loading, setLoading] = useState(true)
+  const url = useMemo(
+    () => (data ? serverWalletAPI.getImageUrl(data) : ''),
+    [data]
+  )
+
+  const handleLoad = (): void => {
+    setLoading(false)
+  }
+
+  if (!data) {
+    return <div className="current-card" />
+  }
+
+  return (
+    <div className="current-card">
+      <div className="nft-card">
+        <div className="img">
+          <img src={url} alt="" onLoad={handleLoad} />
+          {loading && <div className="loading">Loading...</div>}
+        </div>
+        <div className="tid">
+          <span>#{data.tid}</span>
+          <span>
+            {!data.fixed && (
+              <>
+                <RedoOutlined onClick={() => onRefresh(data)} />
+                <PushpinOutlined onClick={() => onFix(data)} />
+              </>
+            )}
+            {!data.exercised && (
+              <PlusSquareOutlined onClick={() => onAddWord(data)} />
+            )}
+          </span>
+        </div>
+      </div>
+      <div className="opts">
+        <div>
+          <a onClick={() => onRefresh(data)}>
+            <RedoOutlined />
+            <span>刷新句子</span>
+          </a>
+        </div>
+        <div>
+          <a onClick={() => onFix(data)}>
+            <PushpinOutlined />
+            <span>收藏句子</span>
+          </a>
+        </div>
+        {!data.exercised && (
+          <div>
+            <a onClick={() => onAddWord(data)}>
+              <PlusSquareOutlined />
+              <span>添加词汇</span>
+            </a>
+          </div>
+        )}
       </div>
     </div>
   )
@@ -293,6 +350,9 @@ export const Home: React.FC = () => {
   const [data, setData] = useState<NftData | null>(null)
   const { address, sign, waitingSign, setWaitingSign, signTx } =
     Unipass.useContainer()
+
+  const fixedNfts = useMemo(() => nfts.filter((nft) => nft.fixed), [nfts])
+  const notFixedNfts = useMemo(() => nfts.filter((nft) => !nft.fixed), [nfts])
 
   useEffect(() => {
     if (!address) {
@@ -362,22 +422,20 @@ export const Home: React.FC = () => {
       .catch((e) => console.log(e))
   }, [address])
 
-  const handleFix = (data: NftData): void => {
-    setData(data)
+  const handleFix = (): void => {
     showFixModal(true)
   }
 
-  const handleAddWord = (data: NftData): void => {
-    setData(data)
+  const handleAddWord = (): void => {
     showAddWordModal(true)
   }
 
-  const handleRefresh = (data: NftData): void => {
-    setData(data)
+  const handleRefresh = (): void => {
     showRefreshModal(true)
   }
 
-  const handleFixOk = async (data: NftData): Promise<void> => {
+  const handleFixOk = async (): Promise<void> => {
+    if (!data) return
     setSubmitting(true)
     const raw = await serverWalletAPI.getFixGen(
       data.class.rarity,
@@ -393,7 +451,8 @@ export const Home: React.FC = () => {
     )
   }
 
-  const handleRefreshOk = async (data: NftData): Promise<void> => {
+  const handleRefreshOk = async (): Promise<void> => {
+    if (!data) return
     setSubmitting(true)
     const raw = await serverWalletAPI.getRefreshGen(
       data.class.rarity,
@@ -410,10 +469,8 @@ export const Home: React.FC = () => {
     ]).catch((e) => console.log(e))
   }
 
-  const handleAddWordOk = async (
-    data: NftData,
-    words: NftWordData[]
-  ): Promise<void> => {
+  const handleAddWordOk = async (words: NftWordData[]): Promise<void> => {
+    if (!data) return
     setSubmitting(true)
     const raw = await serverWalletAPI.getAddWordsGen(
       data.class.rarity,
@@ -436,23 +493,36 @@ export const Home: React.FC = () => {
     <>
       <div id="home">
         <div className="container">
-          <CommonPageTitle lines={['My Nfts']} />
-          <div className="cards">
-            {nfts.map((nft, i) => (
-              <NftCard
-                data={nft}
-                key={i}
-                onFix={handleFix}
-                onAddWord={handleAddWord}
-                onRefresh={handleRefresh}
-              />
-            ))}
-          </div>
+          <CommonPageTitle title="我的驱动器" subTitle="My Driver" />
           {nfts.length === 0 && (
             <div className="empty">
               {address ? 'You have no nft yet' : 'Please connect wallet'}
             </div>
           )}
+          <CommonPageTitle
+            title="待行权NFT"
+            subTitle="Nfts waiting for exercis"
+            size="2"
+          />
+          <div className="not-fixed-driver">
+            <CurrentNftCard
+              data={data}
+              onFix={handleFix}
+              onAddWord={handleAddWord}
+              onRefresh={handleRefresh}
+            />
+            <div className="cards">
+              {notFixedNfts.map((nft, i) => (
+                <NftCard data={nft} key={i} onSelectCard={setData} />
+              ))}
+            </div>
+          </div>
+          <CommonPageTitle title="收藏夹" subTitle="Favorites" size="2" />
+          <div className="fixed-driver">
+            {fixedNfts.map((nft, i) => (
+              <NftCard data={nft} key={i} />
+            ))}
+          </div>
         </div>
       </div>
       <NftComfirmModal
