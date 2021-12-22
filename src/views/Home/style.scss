@@ -32,6 +32,59 @@
   }
 }
 
+#home .fixed-driver {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  justify-content: center;
+  column-gap: 24px;
+  row-gap: 24px;
+
+  .nft-card {
+    .tid {
+      display: none;
+    }
+
+    .img {
+      height: 200px;
+    }
+  }
+}
+
+#home .cards-slide {
+  padding: 0 20px;
+
+  .slick-prev {
+    left: 0px;
+  }
+  .slick-next {
+    right: 0px;
+  }
+  .slick-prev,
+  .slick-next {
+    z-index: 3;
+    height: 20px;
+    width: 20px;
+    transform: translate(0, calc(-50% - 10px));
+
+    &::before {
+      color: #000;
+      font-size: 20px;
+    }
+  }
+
+
+  .nft-card {
+    margin: 0 6px;
+
+    .img {
+      height: 100px;
+    }
+    .tid {
+      font-size: 14px;
+    }
+  }
+}
+
 #home .current-card {
   .nft-card {
     .img {

@@ -1,10 +1,10 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import Unipass, { parseSuccessUrl } from '../../store/unipass'
 import qs from 'qs'
 import serverWalletAPI from '../../apis/ServerWalletAPI'
 import { sleep } from '../../utils'
-import message from '../../components/CommonMessage'
+import { LoadingOutlined } from '@ant-design/icons'
 import './style.scss'
 
 export const LoginRedirect: React.FC = () => {
@@ -13,6 +13,7 @@ export const LoginRedirect: React.FC = () => {
   const param = useParams<{ action: string }>()
   const { parseLoginData, parseSignData, waitingSign, setWaitingSign } =
     Unipass.useContainer()
+  const [text, setText] = useState('')
 
   useEffect(() => {
     const { action, args } = parseSuccessUrl(param.action)
@@ -57,10 +58,11 @@ export const LoginRedirect: React.FC = () => {
       console.log(waitingSign.data)
 
       if (label === 'fix') {
+        setText('Fixing your nft...')
         serverWalletAPI
           .fixNft(args[0], args[1], waitingSign.data.sig)
           .then(() => {
-            message.success('fix success, update at 3s.')
+            setText('fix success, update at 3s.')
             setWaitingSign(null)
           })
           .then(async () => {
@@ -69,10 +71,11 @@ export const LoginRedirect: React.FC = () => {
           })
           .catch((e) => console.log(e))
       } else if (label === 'addwords') {
+        setText('Adding your words...')
         serverWalletAPI
           .addWords(args[0], args[1], args[2], waitingSign.data.sig)
           .then(() => {
-            message.success('add words success, update at 3s.')
+            setText('add words success, update at 3s.')
             setWaitingSign(null)
           })
           .then(async () => {
@@ -81,10 +84,11 @@ export const LoginRedirect: React.FC = () => {
           })
           .catch((e) => console.log(e))
       } else if (label === 'refresh') {
+        setText('Refreshing your nft...')
         serverWalletAPI
           .refreshNft(args[0], args[1], waitingSign.data.sig)
           .then(() => {
-            message.success('refresh success, update at 3s.')
+            setText('refresh success, update at 3s.')
             setWaitingSign(null)
           })
           .then(async () => {
@@ -96,5 +100,12 @@ export const LoginRedirect: React.FC = () => {
     }
   }, [waitingSign])
 
-  return <div id="loginRedirect">Processing...</div>
+  return (
+    <div id="loginRedirect">
+      <div>
+        <LoadingOutlined />
+      </div>
+      <div>{text}</div>
+    </div>
+  )
 }

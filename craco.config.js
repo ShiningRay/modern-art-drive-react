@@ -48,6 +48,11 @@ module.exports = {
         changeOrigin: true,
         secure: false,
       },
+      '/refresh/*': {
+        target: 'https://mad.internal.nervina.cn/',
+        changeOrigin: true,
+        secure: false,
+      },
     },
   },
 }

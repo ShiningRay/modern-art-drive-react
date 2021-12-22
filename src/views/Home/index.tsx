@@ -2,6 +2,8 @@ import React, { useEffect, useMemo, useState } from 'react'
 import CommonPageTitle from '../../components/CommonPageTitle'
 import Unipass from '../../store/unipass'
 import classnames from 'classnames'
+import Slider from 'react-slick'
+import useDetectMobile from '../../hooks/useDetectMobile'
 import serverWalletAPI, {
   NftData,
   NftWordData,
@@ -359,6 +361,7 @@ export const Home: React.FC = () => {
   const [nfts, setNfts] = useState<NftData[]>([])
   const [data, setData] = useState<NftData | null>(null)
   const { address, sign, signTx } = Unipass.useContainer()
+  const [isMobile] = useDetectMobile()
 
   const fixedNfts = useMemo(() => nfts.filter((nft) => nft.fixed), [nfts])
   const notFixedNfts = useMemo(() => nfts.filter((nft) => !nft.fixed), [nfts])
@@ -451,6 +454,15 @@ export const Home: React.FC = () => {
     ]).catch((e) => console.log(e))
   }
 
+  const slideSettings = {
+    dots: false,
+    arrows: true,
+    infinite: false,
+    speed: 0,
+    slidesToShow: 3,
+    autoplay: false,
+  }
+
   return (
     <>
       <div id="home">
@@ -475,11 +487,28 @@ export const Home: React.FC = () => {
                   onAddWord={handleAddWord}
                   onRefresh={handleRefresh}
                 />
-                <div className="cards">
-                  {notFixedNfts.map((nft, i) => (
-                    <NftCard data={nft} key={i} onSelectCard={setData} />
-                  ))}
-                </div>
+                {isMobile ? (
+                  <Slider {...slideSettings} className="cards-slide">
+                    {notFixedNfts.map((nft, i) => (
+                      <NftCard data={nft} key={i} onSelectCard={setData} />
+                    ))}
+                    {notFixedNfts.map((nft, i) => (
+                      <NftCard data={nft} key={i} onSelectCard={setData} />
+                    ))}
+                    {notFixedNfts.map((nft, i) => (
+                      <NftCard data={nft} key={i} onSelectCard={setData} />
+                    ))}
+                    {notFixedNfts.map((nft, i) => (
+                      <NftCard data={nft} key={i} onSelectCard={setData} />
+                    ))}
+                  </Slider>
+                ) : (
+                  <div className="cards">
+                    {notFixedNfts.map((nft, i) => (
+                      <NftCard data={nft} key={i} onSelectCard={setData} />
+                    ))}
+                  </div>
+                )}
               </div>
             </>
           )}
