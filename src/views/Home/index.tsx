@@ -8,7 +8,6 @@ import serverWalletAPI, {
   NftWordDataPosition,
 } from '../../apis/ServerWalletAPI'
 import CommonModal, { CommonModalProps } from '../../components/CommonModal'
-import message from '../../components/CommonMessage'
 import './style.scss'
 import {
   PushpinOutlined,
@@ -16,7 +15,6 @@ import {
   RedoOutlined,
   LoadingOutlined,
 } from '@ant-design/icons'
-import { sleep } from '../../utils'
 
 interface NftComfirmModalProps extends CommonModalProps {
   data: NftData | null
@@ -348,8 +346,7 @@ export const Home: React.FC = () => {
   const [submitting, setSubmitting] = useState(false)
   const [nfts, setNfts] = useState<NftData[]>([])
   const [data, setData] = useState<NftData | null>(null)
-  const { address, sign, waitingSign, setWaitingSign, signTx } =
-    Unipass.useContainer()
+  const { address, sign, signTx } = Unipass.useContainer()
 
   const fixedNfts = useMemo(() => nfts.filter((nft) => nft.fixed), [nfts])
   const notFixedNfts = useMemo(() => nfts.filter((nft) => !nft.fixed), [nfts])
@@ -365,62 +362,15 @@ export const Home: React.FC = () => {
       //   'ckt1qqfy5cxd0x0pl09xvsvkmert8alsajm38qfnmjh2fzfu2804kq47vqfhs5m4f8d60hfuajnx3znz9egtd9yjh5qrw3yee'
       // )
       .getNfts(address)
-      .then((data) => {
-        setNfts(data)
-        return data
-      })
-      .then(() => {
-        if (waitingSign) {
-          const label = waitingSign.args.label as string
-          const args = waitingSign.args.args
-          console.log('get unipass callback:')
-          console.log(`  type: ${label}`)
-          console.log('  args:')
-          console.log(args)
-          console.log('  unipass data:')
-          console.log(waitingSign.data)
-
-          if (label === 'fix') {
-            return serverWalletAPI
-              .fixNft(args[0], args[1], waitingSign.data.sig)
-              .then(() => {
-                message.success('fix success, update at 3s.')
-                setWaitingSign(null)
-              })
-              .then(async () => {
-                await sleep(3000)
-                return await serverWalletAPI.getNfts(address)
-              })
-              .then(setNfts)
-          } else if (label === 'addwords') {
-            return serverWalletAPI
-              .addWords(args[0], args[1], args[2], waitingSign.data.sig)
-              .then(() => {
-                message.success('add words success, update at 3s.')
-                setWaitingSign(null)
-              })
-              .then(async () => {
-                await sleep(3000)
-                return await serverWalletAPI.getNfts(address)
-              })
-              .then(setNfts)
-          } else if (label === 'refresh') {
-            return serverWalletAPI
-              .refreshNft(args[0], args[1], waitingSign.data.sig)
-              .then(() => {
-                message.success('refresh success, update at 3s.')
-                setWaitingSign(null)
-              })
-              .then(async () => {
-                await sleep(3000)
-                return await serverWalletAPI.getNfts(address)
-              })
-              .then(setNfts)
-          }
-        }
-      })
+      .then(setNfts)
       .catch((e) => console.log(e))
   }, [address])
+
+  useEffect(() => {
+    if (notFixedNfts.length > 0) {
+      setData(notFixedNfts[0])
+    }
+  }, [notFixedNfts])
 
   const handleFix = (): void => {
     showFixModal(true)
@@ -499,30 +449,38 @@ export const Home: React.FC = () => {
               {address ? 'You have no nft yet' : 'Please connect wallet'}
             </div>
           )}
-          <CommonPageTitle
-            title="待行权NFT"
-            subTitle="Nfts waiting for exercis"
-            size="2"
-          />
-          <div className="not-fixed-driver">
-            <CurrentNftCard
-              data={data}
-              onFix={handleFix}
-              onAddWord={handleAddWord}
-              onRefresh={handleRefresh}
-            />
-            <div className="cards">
-              {notFixedNfts.map((nft, i) => (
-                <NftCard data={nft} key={i} onSelectCard={setData} />
-              ))}
-            </div>
-          </div>
-          <CommonPageTitle title="收藏夹" subTitle="Favorites" size="2" />
-          <div className="fixed-driver">
-            {fixedNfts.map((nft, i) => (
-              <NftCard data={nft} key={i} />
-            ))}
-          </div>
+          {notFixedNfts.length > 0 && (
+            <>
+              <CommonPageTitle
+                title="待行权NFT"
+                subTitle="Nfts waiting for exercis"
+                size="2"
+              />
+              <div className="not-fixed-driver">
+                <CurrentNftCard
+                  data={data}
+                  onFix={handleFix}
+                  onAddWord={handleAddWord}
+                  onRefresh={handleRefresh}
+                />
+                <div className="cards">
+                  {notFixedNfts.map((nft, i) => (
+                    <NftCard data={nft} key={i} onSelectCard={setData} />
+                  ))}
+                </div>
+              </div>
+            </>
+          )}
+          {fixedNfts.length > 0 && (
+            <>
+              <CommonPageTitle title="收藏夹" subTitle="Favorites" size="2" />
+              <div className="fixed-driver">
+                {fixedNfts.map((nft, i) => (
+                  <NftCard data={nft} key={i} />
+                ))}
+              </div>
+            </>
+          )}
         </div>
       </div>
       <NftComfirmModal

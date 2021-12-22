@@ -10,3 +10,33 @@
 #home .cards .nft-card .tid {
   font-size: 24px;
 }
+
+#home .not-fixed-driver {
+  display: block;
+
+  .current-card {
+    width: auto;
+  }
+  .cards {
+    width: auto;
+  }
+}
+
+#home .current-card {
+  margin-bottom: 50px;
+}
+
+#home .current-card .nft-card .img {
+  height: 300px;
+}
+
+#home .current-card .opts {
+  margin-top: 10px;
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+
+  &>div {
+    margin-top: 0;
+  }
+}
