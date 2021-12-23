@@ -4,7 +4,7 @@ import './style.scss'
 interface CommonPageTitleProps {
   title: string
   subTitle: string
-  size?: '1' | '2'
+  size?: '1' | '2' | '3'
 }
 
 const CommonPageTitle: React.FC<CommonPageTitleProps> = ({

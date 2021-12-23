@@ -17,6 +17,19 @@
   &.size-2 {
     font-size: 40px;
     text-align: left;
+
+    span:last-child::before {
+      margin-left: 16px;
+    }
+  }
+
+  &.size-3 {
+    font-size: 32px;
+    text-align: left;
+
+    span:last-child::before {
+      margin-left: 12px;
+    }
   }
 }
 

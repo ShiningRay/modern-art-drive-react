@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React, { ReactElement, useCallback } from 'react'
 import classnames from 'classnames'
 import styled from 'styled-components'
 import ReactDom from 'react-dom'
@@ -51,8 +51,9 @@ const CommonModalContainer = styled.div`
 export interface CommonModalProps {
   visible: boolean
   onClose: () => void
-  title?: string | React.Component
+  title?: string | ReactElement
   className?: string
+  popoutStyle?: React.CSSProperties
 }
 
 const CommonModal: React.FC<CommonModalProps> = ({
@@ -61,6 +62,7 @@ const CommonModal: React.FC<CommonModalProps> = ({
   onClose,
   title,
   className,
+  popoutStyle,
 }) => {
   const handleContainerClick: React.MouseEventHandler<HTMLDivElement> =
     useCallback(
@@ -78,7 +80,10 @@ const CommonModal: React.FC<CommonModalProps> = ({
       className={classnames({ visible })}
       onClick={handleContainerClick}
     >
-      <div className={classnames('cm-modal-popout', className)}>
+      <div
+        className={classnames('cm-modal-popout', className)}
+        style={popoutStyle}
+      >
         {title && <div className="cm-modal-title">{title}</div>}
         <div className="cm-modal-content">{children}</div>
       </div>

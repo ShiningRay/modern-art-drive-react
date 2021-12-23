@@ -1,3 +1,9 @@
+.cm-modal-title {
+  .common-page-title {
+    padding-bottom: 0;
+  }
+}
+
 #home .cards {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -17,6 +23,7 @@
 
 #home .not-fixed-driver {
   display: flex;
+  align-items: flex-start;
   column-gap: 150px;
   margin-bottom: 150px;
 
@@ -164,65 +171,71 @@
   }
   .opts {
     text-align: center;
-    
+
     button {
-      margin: 0 6px;
+      height: 35px;
+      width: 86px;
       padding: 6px 24px;
-      border-radius: 20px;
+      border-radius: 3px;
       cursor: pointer;
       text-decoration: none;
       background-color: #25282A;
       color: #fff;
       border: none;
 
+      &:first-child {
+        margin-right: 50px;
+      }
+
+      img {
+        height: 20px;
+      }
+
+      &:disabled {
+        opacity: 0.5;
+      }
       &.cancel {
         background-color: #D6D2C4;
         color: #000;
-      }
-      &:disabled {
-        opacity: 0.5;
       }
     }
   }
 }
 
 .nft-add-word-modal {
+  width: 450px;
+  max-width: 95%;
+
   .content {
-    width: 320px;
+    padding: 0 30px;
   }
 
   .new-word {
     margin-bottom: 24px;
 
-    .title {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 12px;
-
-      span {
-        font-size: 16px;
-        font-weight: 600;
-      }
-      select {
-        border: #000 solid 2px;
-        outline: none;
-      }
-    }
-
     .radio {
-      margin-bottom: 12px;
+      font-size: 16px;
+      margin-bottom: 24px;
       cursor: pointer;
 
       &>div {
+        line-height: 22px;
+        color: #fff;
+        display: flex;
+        margin-bottom: 6px;
+
         &::before {
+          flex-grow: 0;
+          flex-shrink: 0;
           content: "";
           display: inline-block;
-          height: 10px;
-          width: 10px;
+          height: 22px;
+          width: 22px;
           vertical-align: middle;
           border: #777 solid 1px;
           background-color: transparent;
-          margin-right: 6px;
+          margin-right: 12px;
+          border-radius: 3px;
         }
 
         &:hover::before {
@@ -232,28 +245,44 @@
           border-color: #000;
           background-color: #000;
         }
-      }
 
+        &>span {
+          padding: 0 6px;
+          border-radius: 3px;
+          flex-grow: 1;
+          flex-shrink: 1;
+          display: inline-block;
+          background-color: #000;
+        }
+      }
     }
 
     .inputs {
-      display: flex;
-      column-gap: 12px;
+      width: 85%;
+      margin: auto;
     }
 
     .input {
-      width: 50%;
+      width: 100%;
       margin-bottom: 6px;
       position: relative;
+      font-size: 16px;
+      margin-top: 18px;
 
       span {
         display: inline-block;
-        width: 20%;
+        width: 30%;
       }
       input {
-        width: 80%;
-        border: #000 solid 2px;
+        width: 70%;
+        border: #a5a5a5 solid 2px;
         outline: none;
+        font-size: 14px;
+        height: 32px;
+
+        &>* {
+          vertical-align: middle;
+        }
       }
 
       &.error {
@@ -273,6 +302,7 @@
           top: 100%;
           right: 0;
           font-size: 12px;
+          line-height: 12px;
           color: red;
         }
       }
@@ -283,14 +313,23 @@
     text-align: center;
     
     button {
-      margin: 0 6px;
+      height: 35px;
+      width: 86px;
       padding: 6px 24px;
-      border-radius: 20px;
+      border-radius: 3px;
       cursor: pointer;
       text-decoration: none;
       background-color: #25282A;
       color: #fff;
       border: none;
+
+      &:first-child {
+        margin-right: 50px;
+      }
+
+      img {
+        height: 20px;
+      }
 
       &:disabled {
         opacity: 0.5;

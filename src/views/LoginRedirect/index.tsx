@@ -80,7 +80,8 @@ export const LoginRedirect: React.FC = () => {
           })
           .then(async () => {
             await sleep(3000)
-            history.push('/')
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            history.push(`/?rarity=${args[0]}&tid=${args[1]}`)
           })
           .catch((e) => console.log(e))
       } else if (label === 'refresh') {
@@ -93,7 +94,8 @@ export const LoginRedirect: React.FC = () => {
           })
           .then(async () => {
             await sleep(3000)
-            history.push('/')
+            // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
+            history.push(`/?rarity=${args[0]}&tid=${args[1]}`)
           })
           .catch((e) => console.log(e))
       }

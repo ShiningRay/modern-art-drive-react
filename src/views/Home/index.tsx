@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { ReactElement, useEffect, useMemo, useState } from 'react'
 import CommonPageTitle from '../../components/CommonPageTitle'
 import Unipass from '../../store/unipass'
 import classnames from 'classnames'
@@ -17,11 +17,15 @@ import {
   RedoOutlined,
   LoadingOutlined,
 } from '@ant-design/icons'
+import okImg from '../../assets/img/btn-ok.svg'
+import cancelImg from '../../assets/img/btn-cancel.svg'
+import { useLocation } from 'react-router'
+import qs from 'qs'
 
 interface NftComfirmModalProps extends CommonModalProps {
   data: NftData | null
   onOk: () => void
-  text: string
+  text: string | ReactElement
   loading: boolean
 }
 interface NftAddWordModalProps extends CommonModalProps {
@@ -52,10 +56,10 @@ const NftComfirmModal: React.FC<NftComfirmModalProps> = ({
         <div className="desc">{text}</div>
         <div className="opts">
           <button disabled={loading} onClick={handleOk}>
-            {loading ? <LoadingOutlined /> : 'Yes'}
+            {loading ? <LoadingOutlined /> : <img src={okImg} alt="" />}
           </button>
           <button disabled={loading} className="cancel" onClick={rest.onClose}>
-            {loading ? <LoadingOutlined /> : 'Cancel'}
+            {loading ? <LoadingOutlined /> : <img src={cancelImg} alt="" />}
           </button>
         </div>
       </div>
@@ -182,19 +186,23 @@ const NftAddWrodModal: React.FC<NftAddWordModalProps> = ({
   }
 
   return (
-    <CommonModal {...rest} title="Add words" className="nft-add-word-modal">
+    <CommonModal
+      {...rest}
+      title={<CommonPageTitle title="添加词汇" subTitle="Add word" size="3" />}
+      className="nft-add-word-modal"
+    >
       <div className="content">
         {words.map((word, i) => (
           <div className="new-word" key={i}>
-            <div className="title">
-              <span>New Word</span>
-            </div>
             <div className="radio">
               <div
                 className={classnames({ active: word.position === 'verb' })}
                 onClick={() => handleChangePosition(i, 'verb')}
               >
-                Front Word(verb.)
+                <span>
+                  <span>添加排头词（动词）</span>
+                  <span>Front Word(verb.)</span>
+                </span>
               </div>
               <div
                 className={classnames({
@@ -202,38 +210,44 @@ const NftAddWrodModal: React.FC<NftAddWordModalProps> = ({
                 })}
                 onClick={() => handleChangePosition(i, 'adjective')}
               >
-                Middle Word(adj.)
+                <span>
+                  <span>添加中间词（形容词）</span>
+                  <span>Middle Word(adj.)</span>
+                </span>
               </div>
               <div
                 className={classnames({ active: word.position === 'noun' })}
                 onClick={() => handleChangePosition(i, 'noun')}
               >
-                Last Word(noun.)
+                <span>
+                  <span>添加结尾词（名词）</span>
+                  <span>Last Word(noun.)</span>
+                </span>
               </div>
             </div>
             <div className="inputs">
-              <div
-                className={classnames('input', { error: errors[i].en })}
-                data-error={errors[i].en}
-                onBlur={handleCheck}
-              >
-                <span>EN</span>
-                <input
-                  type="text"
-                  value={word.content.en}
-                  onChange={(e) => handleChangeEn(i, e.target.value)}
-                />
-              </div>
               <div
                 className={classnames('input', { error: errors[i].zh })}
                 data-error={errors[i].zh}
                 onBlur={handleCheck}
               >
-                <span>CN</span>
+                <span>中文（CN）</span>
                 <input
                   type="text"
                   value={word.content.zh}
                   onChange={(e) => handleChangeZh(i, e.target.value)}
+                />
+              </div>
+              <div
+                className={classnames('input', { error: errors[i].en })}
+                data-error={errors[i].en}
+                onBlur={handleCheck}
+              >
+                <span>英文（EN）</span>
+                <input
+                  type="text"
+                  value={word.content.en}
+                  onChange={(e) => handleChangeEn(i, e.target.value)}
                 />
               </div>
             </div>
@@ -241,10 +255,10 @@ const NftAddWrodModal: React.FC<NftAddWordModalProps> = ({
         ))}
         <div className="opts">
           <button disabled={loading} onClick={handleOk}>
-            {loading ? <LoadingOutlined /> : 'Yes'}
+            {loading ? <LoadingOutlined /> : <img src={okImg} alt="" />}
           </button>
           <button disabled={loading} className="cancel" onClick={rest.onClose}>
-            {loading ? <LoadingOutlined /> : 'Cancel'}
+            {loading ? <LoadingOutlined /> : <img src={cancelImg} alt="" />}
           </button>
         </div>
       </div>
@@ -255,11 +269,19 @@ const NftAddWrodModal: React.FC<NftAddWordModalProps> = ({
 interface NftCardProps {
   data: NftData
   onSelectCard?: (data: NftData) => void
+  size?: 'normal' | 'small'
 }
 
-const NftCard: React.FC<NftCardProps> = ({ data, onSelectCard }) => {
+const NftCard: React.FC<NftCardProps> = ({
+  data,
+  onSelectCard,
+  size = 'normal',
+}) => {
   const [loading, setLoading] = useState(true)
-  const url = useMemo(() => serverWalletAPI.getImageUrl(data), [data])
+  const url = useMemo(
+    () => serverWalletAPI.getImageUrl(data, size),
+    [data, size]
+  )
 
   const handleLoad = (): void => {
     setLoading(false)
@@ -328,18 +350,22 @@ const CurrentNftCard: React.FC<CurrentNftCardProps> = ({
         </div>
       </div>
       <div className="opts">
-        <div>
-          <a onClick={() => onRefresh(data)}>
-            <RedoOutlined />
-            <span>刷新句子</span>
-          </a>
-        </div>
-        <div>
-          <a onClick={() => onFix(data)}>
-            <PushpinOutlined />
-            <span>收藏句子</span>
-          </a>
-        </div>
+        {!data.fixed && (
+          <>
+            <div>
+              <a onClick={() => onRefresh(data)}>
+                <RedoOutlined />
+                <span>刷新句子</span>
+              </a>
+            </div>
+            <div>
+              <a onClick={() => onFix(data)}>
+                <PushpinOutlined />
+                <span>收藏句子</span>
+              </a>
+            </div>
+          </>
+        )}
         {!data.exercised && (
           <div>
             <a onClick={() => onAddWord(data)}>
@@ -362,9 +388,16 @@ export const Home: React.FC = () => {
   const [data, setData] = useState<NftData | null>(null)
   const { address, sign, signTx } = Unipass.useContainer()
   const [isMobile] = useDetectMobile()
+  const location = useLocation()
 
-  const fixedNfts = useMemo(() => nfts.filter((nft) => nft.fixed), [nfts])
-  const notFixedNfts = useMemo(() => nfts.filter((nft) => !nft.fixed), [nfts])
+  const fixedNfts = useMemo(
+    () => nfts.filter((nft) => nft.fixed && nft.exercised),
+    [nfts]
+  )
+  const notFixedNfts = useMemo(
+    () => nfts.filter((nft) => !fixedNfts.includes(nft)),
+    [nfts, fixedNfts]
+  )
 
   useEffect(() => {
     if (!address) {
@@ -383,6 +416,19 @@ export const Home: React.FC = () => {
 
   useEffect(() => {
     if (notFixedNfts.length > 0) {
+      const search = location.search.slice(1)
+      const querys = qs.parse(search)
+      if (querys.rarity && querys.tid) {
+        const selectedNft = notFixedNfts.find(
+          (nft) =>
+            nft.class.rarity === querys.rarity &&
+            nft.tid === parseInt(querys.tid as string)
+        )
+        if (selectedNft) {
+          setData(selectedNft)
+          return
+        }
+      }
       setData(notFixedNfts[0])
     }
   }, [notFixedNfts])
@@ -490,16 +536,12 @@ export const Home: React.FC = () => {
                 {isMobile ? (
                   <Slider {...slideSettings} className="cards-slide">
                     {notFixedNfts.map((nft, i) => (
-                      <NftCard data={nft} key={i} onSelectCard={setData} />
-                    ))}
-                    {notFixedNfts.map((nft, i) => (
-                      <NftCard data={nft} key={i} onSelectCard={setData} />
-                    ))}
-                    {notFixedNfts.map((nft, i) => (
-                      <NftCard data={nft} key={i} onSelectCard={setData} />
-                    ))}
-                    {notFixedNfts.map((nft, i) => (
-                      <NftCard data={nft} key={i} onSelectCard={setData} />
+                      <NftCard
+                        data={nft}
+                        key={i}
+                        onSelectCard={setData}
+                        size="small"
+                      />
                     ))}
                   </Slider>
                 ) : (
@@ -517,7 +559,7 @@ export const Home: React.FC = () => {
               <CommonPageTitle title="收藏夹" subTitle="Favorites" size="2" />
               <div className="fixed-driver">
                 {fixedNfts.map((nft, i) => (
-                  <NftCard data={nft} key={i} />
+                  <NftCard data={nft} key={i} size="small" />
                 ))}
               </div>
             </>
@@ -529,8 +571,19 @@ export const Home: React.FC = () => {
         visible={fixModalVisible && !!data}
         onClose={() => showFixModal(false)}
         onOk={handleFixOk}
-        text="Are you sure to fix this nft?"
-        title={`Fix #${data ? data.tid : ''}`}
+        text={
+          <div>
+            <div>确认固定这个驱动器？</div>
+            <div>Are you sure to fix this driver?</div>
+          </div>
+        }
+        title={
+          <CommonPageTitle
+            title={`固定 #${data ? data.tid : ''}`}
+            subTitle={`Fix #${data ? data.tid : ''}`}
+            size="3"
+          />
+        }
         loading={submitting}
       />
       <NftComfirmModal
@@ -538,8 +591,19 @@ export const Home: React.FC = () => {
         visible={refreshModalVisible && !!data}
         onClose={() => showRefreshModal(false)}
         onOk={handleRefreshOk}
-        text="Are you sure to refresh this nft?"
-        title={`Refresh #${data ? data.tid : ''}`}
+        text={
+          <div>
+            <div>确认刷新这个驱动器？</div>
+            <div>Are you sure to refresh this driver?</div>
+          </div>
+        }
+        title={
+          <CommonPageTitle
+            title={`刷新 #${data ? data.tid : ''}`}
+            subTitle={`Refresh #${data ? data.tid : ''}`}
+            size="3"
+          />
+        }
         loading={submitting}
       />
       <NftAddWrodModal

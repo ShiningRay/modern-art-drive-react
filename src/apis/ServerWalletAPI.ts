@@ -55,11 +55,11 @@ export class ServerWalletAPI {
     return await axios.get<NftData[]>(url).then((resp) => resp.data)
   }
 
-  getImageUrl(nft: NftData): string {
+  getImageUrl(nft: NftData, size: 'normal' | 'small' = 'normal'): string {
     const { tid, refreshedAtBlock } = nft
-    const url = `/renderer/${nft.class.rarity}.png?tid=${tid}&_=${String(
-      refreshedAtBlock
-    )}`
+    const url = `/renderer/${
+      nft.class.rarity
+    }.png?tid=${tid}&size=${size}&_=${String(refreshedAtBlock)}`
 
     return url
   }

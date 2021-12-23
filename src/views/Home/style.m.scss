@@ -44,3 +44,15 @@
 #home .fixed-driver {
   grid-template-columns: repeat(2, 1fr);
 }
+
+.nft-add-word-modal .content {
+  padding: 0;
+}
+
+.nft-add-word-modal .new-word .inputs {
+  width: 100%;
+}
+
+.nft-add-word-modal .new-word .radio > div > span {
+  font-size: 14px;
+}
