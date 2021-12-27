@@ -5,22 +5,22 @@
   },
   "proxies": {
     "/nfts/": {
-      "origin": "https://mad.internal.nervina.cn/nfts/"
+      "origin": "https://${API_DOMAIN}/nfts/"
     },
     "/renderer/": {
-      "origin": "https://mad.internal.nervina.cn/renderer/"
+      "origin": "https://${API_DOMAIN}/renderer/"
     },
     "/fix/": {
-      "origin": "https://mad.internal.nervina.cn/fix/"
+      "origin": "https://${API_DOMAIN}/fix/"
     },
     "/add/": {
-      "origin": "https://mad.internal.nervina.cn/add/"
+      "origin": "https://${API_DOMAIN}/add/"
     },
     "/refresh/": {
-      "origin": "https://mad.internal.nervina.cn/refresh/"
+      "origin": "https://${API_DOMAIN}/refresh/"
     },
     "/gen/": {
-      "origin": "https://mad.internal.nervina.cn/gen/"
+      "origin": "https://${API_DOMAIN}/gen/"
     }
   }
 }
