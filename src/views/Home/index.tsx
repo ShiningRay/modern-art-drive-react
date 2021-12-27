@@ -270,12 +270,14 @@ interface NftCardProps {
   data: NftData
   onSelectCard?: (data: NftData) => void
   size?: 'normal' | 'small'
+  active?: boolean
 }
 
 const NftCard: React.FC<NftCardProps> = ({
   data,
   onSelectCard,
   size = 'normal',
+  active = false,
 }) => {
   const [loading, setLoading] = useState(true)
   const url = useMemo(
@@ -288,7 +290,10 @@ const NftCard: React.FC<NftCardProps> = ({
   }
 
   return (
-    <div className="nft-card" onClick={() => onSelectCard?.(data)}>
+    <div
+      className={classnames('nft-card', { active })}
+      onClick={() => onSelectCard?.(data)}
+    >
       <div className="img">
         <img src={url} alt="" onLoad={handleLoad} />
         {loading && <div className="loading">Loading...</div>}
@@ -547,7 +552,12 @@ export const Home: React.FC = () => {
                 ) : (
                   <div className="cards">
                     {notFixedNfts.map((nft, i) => (
-                      <NftCard data={nft} key={i} onSelectCard={setData} />
+                      <NftCard
+                        data={nft}
+                        key={i}
+                        onSelectCard={setData}
+                        active={nft === data}
+                      />
                     ))}
                   </div>
                 )}

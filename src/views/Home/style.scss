@@ -10,11 +10,14 @@
   justify-content: center;
   column-gap: 24px;
   row-gap: 24px;
+  max-height: 720px;
+  overflow: auto;
 
   .nft-card {
     border: transparent solid 1px;
     cursor: pointer;
 
+    &.active,
     &:hover {
       border-color: #000;
     }
@@ -211,18 +214,18 @@
   }
 
   .new-word {
-    margin-bottom: 24px;
+    margin-bottom: 36px;
 
     .radio {
       font-size: 16px;
-      margin-bottom: 24px;
+      margin-bottom: 36px;
       cursor: pointer;
 
       &>div {
         line-height: 22px;
         color: #fff;
         display: flex;
-        margin-bottom: 6px;
+        margin-bottom: 12px;
 
         &::before {
           flex-grow: 0;
@@ -267,7 +270,7 @@
       margin-bottom: 6px;
       position: relative;
       font-size: 16px;
-      margin-top: 18px;
+      margin-top: 24px;
 
       span {
         display: inline-block;
