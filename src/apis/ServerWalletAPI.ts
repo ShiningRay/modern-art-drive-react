@@ -52,14 +52,14 @@ export class ServerWalletAPI {
 
   async getNfts(address: string): Promise<NftData[]> {
     const url = `/nfts/${address}`
-    return await axios.get<NftData[]>(url).then((resp) => resp.data)
+    return await this.axios.get<NftData[]>(url).then((resp) => resp.data)
   }
 
   getImageUrl(nft: NftData, size: 'normal' | 'small' = 'normal'): string {
     const { tid, refreshedAtBlock } = nft
-    const url = `/renderer/${
-      nft.class.rarity
-    }.png?tid=${tid}&size=${size}&_=${String(refreshedAtBlock)}`
+    // prettier-ignore
+    const url = `/renderer/${nft.class.rarity
+      }.png?tid=${tid}&size=${size}&_=${String(refreshedAtBlock)}`
 
     return url
   }
@@ -70,7 +70,7 @@ export class ServerWalletAPI {
     sig: string
   ): Promise<any> {
     const url = `/fix/${rarity}/${tid}`
-    return await axios.post<any>(url, { sig }).then((resp) => resp.data)
+    return await this.axios.post<any>(url, { sig }).then((resp) => resp.data)
   }
 
   async addWords(
@@ -85,7 +85,7 @@ export class ServerWalletAPI {
 
   async getRecnetFix(): Promise<RecnetFixData[]> {
     const url = '/fix/recent'
-    return await axios.get(url).then((resp) => resp.data)
+    return await this.axios.get(url).then((resp) => resp.data)
   }
 
   async refreshNft(
@@ -94,7 +94,7 @@ export class ServerWalletAPI {
     sig: string
   ): Promise<any> {
     const url = `/refresh/${rarity}/${tid}`
-    return await axios.post<any>(url, { sig }).then((resp) => resp.data)
+    return await this.axios.post<any>(url, { sig }).then((resp) => resp.data)
   }
 
   async getRefreshGen(
@@ -102,12 +102,12 @@ export class ServerWalletAPI {
     tid: string | number
   ): Promise<any> {
     const url = `/gen/refresh/${rarity}/${tid}`
-    return await axios.post<any>(url).then((resp) => resp.data)
+    return await this.axios.post<any>(url).then((resp) => resp.data)
   }
 
   async getFixGen(rarity: string | number, tid: string | number): Promise<any> {
     const url = `/gen/fix/${rarity}/${tid}`
-    return await axios.post<any>(url).then((resp) => resp.data)
+    return await this.axios.post<any>(url).then((resp) => resp.data)
   }
 
   async getAddWordsGen(
@@ -116,7 +116,7 @@ export class ServerWalletAPI {
     words: NftWordData[]
   ): Promise<any> {
     const url = `/gen/add/${rarity}/${tid}`
-    return await axios.post<any>(url, { words }).then((resp) => resp.data)
+    return await this.axios.post<any>(url, { words }).then((resp) => resp.data)
   }
 }
 
