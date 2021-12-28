@@ -22,6 +22,25 @@ import cancelImg from '../../assets/img/btn-cancel.svg'
 import { useLocation } from 'react-router'
 import qs from 'qs'
 
+interface NftImageModalProps extends CommonModalProps {
+  data: NftData | null
+}
+
+const NftImageModal: React.FC<NftImageModalProps> = ({ data, ...rest }) => {
+  const url = useMemo(
+    () => (data ? serverWalletAPI.getImageUrl(data, 'normal') : undefined),
+    [data]
+  )
+
+  return (
+    <CommonModal {...rest} className="nft-image-modal">
+      <div className="content">
+        <div className="desc">{url && <img src={url} alt="" />}</div>
+      </div>
+    </CommonModal>
+  )
+}
+
 interface NftComfirmModalProps extends CommonModalProps {
   data: NftData | null
   onOk: () => void
@@ -271,6 +290,7 @@ interface NftCardProps {
   onSelectCard?: (data: NftData) => void
   size?: 'normal' | 'small'
   active?: boolean
+  onShowImage?: (data: NftData) => void
 }
 
 const NftCard: React.FC<NftCardProps> = ({
@@ -278,6 +298,7 @@ const NftCard: React.FC<NftCardProps> = ({
   onSelectCard,
   size = 'normal',
   active = false,
+  onShowImage,
 }) => {
   const [loading, setLoading] = useState(true)
   const url = useMemo(
@@ -295,7 +316,12 @@ const NftCard: React.FC<NftCardProps> = ({
       onClick={() => onSelectCard?.(data)}
     >
       <div className="img">
-        <img src={url} alt="" onLoad={handleLoad} />
+        <img
+          onClick={onShowImage ? () => onShowImage(data) : undefined}
+          src={url}
+          alt=""
+          onLoad={handleLoad}
+        />
         {loading && <div className="loading">Loading...</div>}
       </div>
       <div className="tid">
@@ -310,6 +336,7 @@ interface CurrentNftCardProps {
   onFix: (data: NftData) => void
   onAddWord: (data: NftData) => void
   onRefresh: (data: NftData) => void
+  onShowImage: (data: NftData) => void
 }
 
 const CurrentNftCard: React.FC<CurrentNftCardProps> = ({
@@ -317,6 +344,7 @@ const CurrentNftCard: React.FC<CurrentNftCardProps> = ({
   onFix,
   onAddWord,
   onRefresh,
+  onShowImage,
 }) => {
   const [loading, setLoading] = useState(true)
   const url = useMemo(
@@ -336,7 +364,12 @@ const CurrentNftCard: React.FC<CurrentNftCardProps> = ({
     <div className="current-card">
       <div className="nft-card">
         <div className="img">
-          <img src={url} alt="" onLoad={handleLoad} />
+          <img
+            onClick={() => onShowImage(data)}
+            src={url}
+            alt=""
+            onLoad={handleLoad}
+          />
           {loading && <div className="loading">Loading...</div>}
         </div>
         <div className="tid">
@@ -360,13 +393,19 @@ const CurrentNftCard: React.FC<CurrentNftCardProps> = ({
             <div>
               <a onClick={() => onRefresh(data)}>
                 <RedoOutlined />
-                <span>刷新句子</span>
+                <span>
+                  <span>刷新句子</span>
+                  <span>Refresh</span>
+                </span>
               </a>
             </div>
             <div>
               <a onClick={() => onFix(data)}>
                 <PushpinOutlined />
-                <span>收藏句子</span>
+                <span>
+                  <span>保留句子</span>
+                  <span>Fix the phrase</span>
+                </span>
               </a>
             </div>
           </>
@@ -375,7 +414,10 @@ const CurrentNftCard: React.FC<CurrentNftCardProps> = ({
           <div>
             <a onClick={() => onAddWord(data)}>
               <PlusSquareOutlined />
-              <span>添加词汇</span>
+              <span>
+                <span>添加词汇</span>
+                <span>Add words</span>
+              </span>
             </a>
           </div>
         )}
@@ -388,9 +430,11 @@ export const Home: React.FC = () => {
   const [fixModalVisible, showFixModal] = useState(false)
   const [addWordModalVisible, showAddWordModal] = useState(false)
   const [refreshModalVisible, showRefreshModal] = useState(false)
+  const [imgModalVisible, showImageModal] = useState(false)
   const [submitting, setSubmitting] = useState(false)
   const [nfts, setNfts] = useState<NftData[]>([])
   const [data, setData] = useState<NftData | null>(null)
+  const [currentShowData, setCurrentShowData] = useState<NftData | null>(null)
   const { address, sign, signTx } = Unipass.useContainer()
   const [isMobile] = useDetectMobile()
   const location = useLocation()
@@ -448,6 +492,11 @@ export const Home: React.FC = () => {
 
   const handleRefresh = (): void => {
     showRefreshModal(true)
+  }
+
+  const handleImageShow = (data: NftData): void => {
+    setCurrentShowData(data)
+    showImageModal(true)
   }
 
   const handleFixOk = async (): Promise<void> => {
@@ -528,7 +577,7 @@ export const Home: React.FC = () => {
             <>
               <CommonPageTitle
                 title="待行权NFT"
-                subTitle="Nfts waiting for exercis"
+                subTitle="NFTs ABLE TO OPERATE"
                 size="2"
               />
               <div className="not-fixed-driver">
@@ -537,6 +586,7 @@ export const Home: React.FC = () => {
                   onFix={handleFix}
                   onAddWord={handleAddWord}
                   onRefresh={handleRefresh}
+                  onShowImage={handleImageShow}
                 />
                 {isMobile ? (
                   <Slider {...slideSettings} className="cards-slide">
@@ -566,10 +616,15 @@ export const Home: React.FC = () => {
           )}
           {fixedNfts.length > 0 && (
             <>
-              <CommonPageTitle title="收藏夹" subTitle="Favorites" size="2" />
+              <CommonPageTitle title="收藏夹" subTitle="FAVORITES" size="2" />
               <div className="fixed-driver">
                 {fixedNfts.map((nft, i) => (
-                  <NftCard data={nft} key={i} size="small" />
+                  <NftCard
+                    data={nft}
+                    key={i}
+                    size="small"
+                    onShowImage={handleImageShow}
+                  />
                 ))}
               </div>
             </>
@@ -583,13 +638,15 @@ export const Home: React.FC = () => {
         onOk={handleFixOk}
         text={
           <div>
-            <div>确认固定这个驱动器？</div>
-            <div>Are you sure to fix this driver?</div>
+            <div>保留这个句子？确认后将不可刷新</div>
+            <div>
+              Fix this Phrase？It would not be refreshed after conformation.
+            </div>
           </div>
         }
         title={
           <CommonPageTitle
-            title={`固定 #${data ? data.tid : ''}`}
+            title={`保留 #${data ? data.tid : ''}`}
             subTitle={`Fix #${data ? data.tid : ''}`}
             size="3"
           />
@@ -603,8 +660,8 @@ export const Home: React.FC = () => {
         onOk={handleRefreshOk}
         text={
           <div>
-            <div>确认刷新这个驱动器？</div>
-            <div>Are you sure to refresh this driver?</div>
+            <div>确认刷新驱动器？</div>
+            <div>Confirm to refresh this Driver？</div>
           </div>
         }
         title={
@@ -622,6 +679,11 @@ export const Home: React.FC = () => {
         onClose={() => showAddWordModal(false)}
         onOk={handleAddWordOk}
         loading={submitting}
+      />
+      <NftImageModal
+        data={currentShowData}
+        visible={imgModalVisible && !!data}
+        onClose={() => showImageModal(false)}
       />
     </>
   )
