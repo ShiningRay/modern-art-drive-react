@@ -7,7 +7,10 @@ function envArg(tag: string, defaultValue: string): string {
 export const SERVER_URL = envArg('REACT_APP_SERVER_URL', '/')
 
 // ckb
-export const CKB_NODE_URL = envArg('REACT_APP_CKB_NODE_URL', 'https://testnet.ckb.dev')
+export const CKB_NODE_URL = envArg(
+  'REACT_APP_CKB_NODE_URL',
+  'https://testnet.ckb.dev'
+)
 export const CKB_INDEXER_URL = envArg(
   'REACT_APP_CKB_INDEXER_URL',
   'https://testnet.ckb.dev/indexer'
