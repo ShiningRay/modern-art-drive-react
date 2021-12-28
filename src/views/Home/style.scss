@@ -115,6 +115,11 @@
     .anticon {
       margin-right: 6px;
     }
+    a>span:last-child {
+      span {
+        margin-right: 4px;
+      }
+    }
   }
 }
 
