@@ -7,7 +7,7 @@ import {
   Provider,
   Script,
 } from '@lay2/pw-core'
-
+import { IS_MAINNET } from '../../constants'
 type UP_ACT =
   | 'UP-READY'
   | 'UP-LOGIN'
@@ -84,9 +84,9 @@ export function pubkeyToAddress(pubkey: string): string {
     .serializeJson()
     .slice(0, 42)
   // console.log('------hashHex', hashHex)
-  const isLina = localStorage.getItem('lina')
+  // const isLina = localStorage.getItem('lina')
   let script: Script
-  if (isLina) {
+  if (IS_MAINNET) {
     script = new Script(
       '0x614d40a86e1b29a8f4d8d93b9f3b390bf740803fa19a69f1c95716e029ea09b3',
       hashHex,
