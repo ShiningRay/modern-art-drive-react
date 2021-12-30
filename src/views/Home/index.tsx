@@ -21,6 +21,7 @@ import okImg from '../../assets/img/btn-ok.svg'
 import cancelImg from '../../assets/img/btn-cancel.svg'
 import { useLocation } from 'react-router'
 import qs from 'qs'
+import message from '../../components/CommonMessage'
 
 interface NftImageModalProps extends CommonModalProps {
   data: NftData | null
@@ -519,19 +520,27 @@ export const Home: React.FC = () => {
   const handleRefreshOk = async (): Promise<void> => {
     if (!data) return
     setSubmitting(true)
-    const raw = await serverWalletAPI.getRefreshGen(
-      data.class.rarity,
-      data.tid.toString()
-    )
-    const signedMessage = await signTx(raw)
-    console.log('签名Object：')
-    console.log(raw)
-    console.log('签名结果：')
-    console.log(signedMessage)
-    sign(signedMessage, 'refresh', [
-      data.class.rarity,
-      data.tid.toString(),
-    ]).catch((e) => console.log(e))
+    try {
+      const raw = await serverWalletAPI.getRefreshGen(
+        data.class.rarity,
+        data.tid.toString()
+      )
+      const signedMessage = await signTx(raw)
+      console.log('签名Object：')
+      console.log(raw)
+      console.log('签名结果：')
+      console.log(signedMessage)
+      sign(signedMessage, 'refresh', [
+        data.class.rarity,
+        data.tid.toString(),
+      ]).catch((e) => console.log(e))
+    } catch (error: any) {
+      if (error.response?.data?.message) {
+        message.error(error.response.data.message)
+      }
+      setSubmitting(false)
+      showRefreshModal(false)
+    }
   }
 
   const handleAddWordOk = async (words: NftWordData[]): Promise<void> => {
