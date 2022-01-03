@@ -10,6 +10,7 @@ import { CopyToClipboard } from 'react-copy-to-clipboard'
 import Marquee from 'react-fast-marquee'
 import './style.scss'
 import serverWalletAPI, { RecnetFixData } from '../../apis/ServerWalletAPI'
+import { CommonAlertModal } from '../../components/CommonModal'
 
 // TODO: 是否要fix header
 // const HEADER_TOP = 100
@@ -100,6 +101,7 @@ export const Layout: React.FC = ({ children }) => {
     <>
       <Header />
       <div id="pageContent">{children}</div>
+      <CommonAlertModal />
       <Footer />
     </>
   )

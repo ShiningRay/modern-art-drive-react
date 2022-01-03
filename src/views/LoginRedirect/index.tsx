@@ -1,11 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { useHistory, useLocation, useParams } from 'react-router-dom'
 import Unipass, { parseSuccessUrl } from '../../store/unipass'
 import qs from 'qs'
 import serverWalletAPI from '../../apis/ServerWalletAPI'
 import { sleep } from '../../utils'
-import { LoadingOutlined } from '@ant-design/icons'
 import './style.scss'
+import System from '../../store/system'
 
 export const LoginRedirect: React.FC = () => {
   const history = useHistory()
@@ -13,7 +13,7 @@ export const LoginRedirect: React.FC = () => {
   const param = useParams<{ action: string }>()
   const { parseLoginData, parseSignData, waitingSign, setWaitingSign } =
     Unipass.useContainer()
-  const [text, setText] = useState('')
+  const { alertMessage, showAlertModal } = System.useContainer()
 
   useEffect(() => {
     const { action, args } = parseSuccessUrl(param.action)
@@ -58,42 +58,91 @@ export const LoginRedirect: React.FC = () => {
       console.log(waitingSign.data)
 
       if (label === 'fix') {
-        setText('Fixing your nft...')
+        alertMessage(
+          <>
+            <div>正在固定你的驱动器</div>
+            <div>Fixing your driver...</div>
+          </>
+        )
+        // setText('Fixing your nft...')
         serverWalletAPI
           .fixNft(args[0], args[1], waitingSign.data.sig)
           .then(() => {
-            setText('fix success, update at 3s.')
+            alertMessage(
+              <>
+                <div>固定成功，稍后片刻</div>
+                <div>Fix success, update at 3s.</div>
+              </>
+            )
+            // setText('fix success, update at 3s.')
             setWaitingSign(null)
           })
           .then(async () => {
             await sleep(3000)
+            showAlertModal(false)
             history.push('/')
           })
           .catch((e) => console.log(e))
       } else if (label === 'addwords') {
-        setText('Adding your words...')
+        alertMessage(
+          <>
+            <div>正在添加你的词条</div>
+            <div>Adding your words...</div>
+          </>,
+          {
+            type: 'loading',
+          }
+        )
         serverWalletAPI
           .addWords(args[0], args[1], args[2], waitingSign.data.sig)
           .then(() => {
-            setText('add words success, update at 3s.')
+            alertMessage(
+              <>
+                <div>添加成功，稍等片刻</div>
+                <div>Add words success, update at 3s.</div>
+              </>,
+              {
+                type: 'loading',
+              }
+            )
             setWaitingSign(null)
           })
           .then(async () => {
             await sleep(3000)
+            showAlertModal(false)
             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             history.push(`/?rarity=${args[0]}&tid=${args[1]}`)
           })
           .catch((e) => console.log(e))
       } else if (label === 'refresh') {
-        setText('Refreshing your nft...')
+        alertMessage(
+          <>
+            <div>正在刷新你的驱动器</div>
+            <div>Refreshing your driver...</div>
+          </>,
+          {
+            type: 'loading',
+          }
+        )
+        // setText('Refreshing your nft...')
         serverWalletAPI
           .refreshNft(args[0], args[1], waitingSign.data.sig)
           .then(() => {
-            setText('refresh success, update at 3s.')
+            alertMessage(
+              <>
+                <div>刷新成功，稍后片刻</div>
+                <div>Refresh success, update at 3s.</div>
+              </>,
+              {
+                type: 'loading',
+              }
+            )
+            // setText('refresh success, update at 3s.')
             setWaitingSign(null)
           })
           .then(async () => {
             await sleep(3000)
+            showAlertModal(false)
             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             history.push(`/?rarity=${args[0]}&tid=${args[1]}`)
           })
@@ -102,12 +151,5 @@ export const LoginRedirect: React.FC = () => {
     }
   }, [waitingSign])
 
-  return (
-    <div id="loginRedirect">
-      <div>
-        <LoadingOutlined />
-      </div>
-      <div>{text}</div>
-    </div>
-  )
+  return <div id="loginRedirect" />
 }

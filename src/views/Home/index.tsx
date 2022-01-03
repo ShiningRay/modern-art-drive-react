@@ -21,7 +21,7 @@ import okImg from '../../assets/img/btn-ok.svg'
 import cancelImg from '../../assets/img/btn-cancel.svg'
 import { useLocation } from 'react-router'
 import qs from 'qs'
-import message from '../../components/CommonMessage'
+import System from '../../store/system'
 
 interface NftImageModalProps extends CommonModalProps {
   data: NftData | null
@@ -88,7 +88,7 @@ const NftComfirmModal: React.FC<NftComfirmModalProps> = ({
 }
 
 const zhReg = /^[\u4e00-\u9fa5]{0,5}$/
-const enReg = /^[a-zA-Z]{0,10}$/
+const enReg = /^[a-zA-Z]{0,15}$/
 function getDefaultWord(): NftWordData {
   return {
     position: 'verb',
@@ -437,6 +437,7 @@ export const Home: React.FC = () => {
   const [data, setData] = useState<NftData | null>(null)
   const [currentShowData, setCurrentShowData] = useState<NftData | null>(null)
   const { address, sign, signTx } = Unipass.useContainer()
+  const { alertMessage } = System.useContainer()
   const [isMobile] = useDetectMobile()
   const location = useLocation()
 
@@ -536,7 +537,15 @@ export const Home: React.FC = () => {
       ]).catch((e) => console.log(e))
     } catch (error: any) {
       if (error.response?.data?.message) {
-        message.error(error.response.data.message)
+        alertMessage(
+          error.response.data.message
+            .split('\n')
+            .map((line: string) => <div>{line}</div>),
+          {
+            okButton: true,
+            type: 'error',
+          }
+        )
       }
       setSubmitting(false)
       showRefreshModal(false)
@@ -576,7 +585,11 @@ export const Home: React.FC = () => {
     <>
       <div id="home">
         <div className="container">
-          <CommonPageTitle title="我的驱动器" subTitle="My Driver" />
+          <CommonPageTitle
+            title="我的驱动器"
+            subTitle="My Driver"
+            extra={<button className="page-title-button">操作教程</button>}
+          />
           {nfts.length === 0 && (
             <div className="empty">
               {address ? 'You have no nft yet' : 'Please connect wallet'}
@@ -638,6 +651,9 @@ export const Home: React.FC = () => {
               </div>
             </>
           )}
+          <div className="more">
+            <button className="page-title-button">更多作品阐释</button>
+          </div>
         </div>
       </div>
       <NftComfirmModal

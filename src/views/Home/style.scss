@@ -350,6 +350,24 @@
   }
 }
 
+#home {
+  .page-title-button {
+    padding: 6px 24px;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    background-color: #25282A;
+    color: #fff;
+    border: none;
+    white-space: nowrap;
+    font-size: 18px;
+  }
+
+  .more {
+    text-align: center;
+  }
+}
+
 @media screen and (max-width: 600px) {
   @import './style.m.scss';
 }

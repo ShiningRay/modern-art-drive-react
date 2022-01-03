@@ -2,6 +2,9 @@ import React, { ReactElement, useCallback } from 'react'
 import classnames from 'classnames'
 import styled from 'styled-components'
 import ReactDom from 'react-dom'
+import okImg from '../../assets/img/btn-ok.svg'
+import System from '../../store/system'
+import { LoadingOutlined, CloseCircleOutlined } from '@ant-design/icons'
 
 const CommonModalContainer = styled.div`
   position: fixed;
@@ -44,6 +47,31 @@ const CommonModalContainer = styled.div`
       overflow: auto;
       flex-grow: 1;
       flex-shrink: 1;
+    }
+  }
+
+  .cm-alert-modal {
+    text-align: center;
+
+    &-type {
+      font-size: 36px;
+      margin-bottom: 12px;
+    }
+    &-content {
+      margin-bottom: 12px;
+    }
+    &-opt {
+      button {
+        height: 35px;
+        width: 86px;
+        padding: 6px 24px;
+        border-radius: 3px;
+        cursor: pointer;
+        text-decoration: none;
+        background-color: #25282a;
+        color: #fff;
+        border: none;
+      }
     }
   }
 `
@@ -94,3 +122,38 @@ const CommonModal: React.FC<CommonModalProps> = ({
 }
 
 export default CommonModal
+
+export const CommonAlertModal: React.FC = () => {
+  const {
+    alertModalVisible,
+    showAlertModal,
+    alertOkButton,
+    alertContent,
+    alertType,
+  } = System.useContainer()
+
+  const handleClose = (): void => {
+    if (alertOkButton) {
+      showAlertModal(false)
+    }
+  }
+
+  return (
+    <CommonModal visible={alertModalVisible} onClose={handleClose}>
+      <div className="cm-alert-modal">
+        <div className="cm-alert-modal-type">
+          {alertType === 'loading' && <LoadingOutlined />}
+          {alertType === 'error' && <CloseCircleOutlined />}
+        </div>
+        <div className="cm-alert-modal-content">{alertContent}</div>
+        {alertOkButton && (
+          <div className="cm-alert-modal-opt">
+            <button onClick={handleClose}>
+              <img src={okImg} alt="" />
+            </button>
+          </div>
+        )}
+      </div>
+    </CommonModal>
+  )
+}
