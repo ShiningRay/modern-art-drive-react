@@ -251,7 +251,7 @@ const NftAddWrodModal: React.FC<NftAddWordModalProps> = ({
                 data-error={errors[i].zh}
                 onBlur={handleCheck}
               >
-                <span>中文（CN）</span>
+                <span>新词条</span>
                 <input
                   type="text"
                   value={word.content.zh}
