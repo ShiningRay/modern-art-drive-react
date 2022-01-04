@@ -38,12 +38,14 @@ const Header: React.FC = ({ children }) => {
       )}
       <header>
         <div className="container">
-          <img src={logoImage} alt="" className="logo" />
+          <a href="https://digitalcompound.org">
+            <img src={logoImage} alt="" className="logo" />
+          </a>
           <div className="opt">
             {maskedAddress && address ? (
               <>
                 <a className="learn" onClick={signout}>
-                  {t('header.disconnect')}
+                  断开连接
                 </a>
                 <CopyToClipboard
                   text={address}
@@ -54,7 +56,7 @@ const Header: React.FC = ({ children }) => {
               </>
             ) : (
               <a className="connect" onClick={login}>
-                {t('header.connect')}
+                连接钱包
               </a>
             )}
           </div>

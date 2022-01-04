@@ -88,7 +88,7 @@ const NftComfirmModal: React.FC<NftComfirmModalProps> = ({
 }
 
 const zhReg = /^[\u4e00-\u9fa5]{0,5}$/
-const enReg = /^[a-zA-Z]{0,15}$/
+// const enReg = /^[a-zA-Z]{0,15}$/
 function getDefaultWord(): NftWordData {
   return {
     position: 'verb',
@@ -160,11 +160,11 @@ const NftAddWrodModal: React.FC<NftAddWordModalProps> = ({
     setWords([...words])
   }
 
-  const handleChangeEn = (index: number, value: string): void => {
-    const word = words[index]
-    word.content.en = value
-    setWords([...words])
-  }
+  // const handleChangeEn = (index: number, value: string): void => {
+  //   const word = words[index]
+  //   word.content.en = value
+  //   setWords([...words])
+  // }
 
   const handleChangeZh = (index: number, value: string): void => {
     const word = words[index]
@@ -175,17 +175,17 @@ const NftAddWrodModal: React.FC<NftAddWordModalProps> = ({
   const handleCheck = (): boolean => {
     let result = true
     words.forEach((word, i) => {
-      const { en, zh } = word.content
+      const { zh } = word.content
       const err = errors[i]
       err.en = ''
       err.zh = ''
-      if (!en) {
-        err.en = "Can't be empty"
-        result = false
-      } else if (!enReg.test(en)) {
-        err.en = 'only a-z, A-Z supported'
-        result = false
-      }
+      // if (!en) {
+      //   err.en = "Can't be empty"
+      //   result = false
+      // } else if (!enReg.test(en)) {
+      //   err.en = 'only a-z, A-Z supported'
+      //   result = false
+      // }
       if (!zh) {
         err.zh = "Can't be empty"
         result = false
@@ -258,7 +258,7 @@ const NftAddWrodModal: React.FC<NftAddWordModalProps> = ({
                   onChange={(e) => handleChangeZh(i, e.target.value)}
                 />
               </div>
-              <div
+              {/* <div
                 className={classnames('input', { error: errors[i].en })}
                 data-error={errors[i].en}
                 onBlur={handleCheck}
@@ -269,7 +269,7 @@ const NftAddWrodModal: React.FC<NftAddWordModalProps> = ({
                   value={word.content.en}
                   onChange={(e) => handleChangeEn(i, e.target.value)}
                 />
-              </div>
+              </div> */}
             </div>
           </div>
         ))}
