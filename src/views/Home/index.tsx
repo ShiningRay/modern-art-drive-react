@@ -501,21 +501,42 @@ export const Home: React.FC = () => {
     showImageModal(true)
   }
 
+  const handleGenError = (error: any): void => {
+    if (error.response?.data?.message) {
+      alertMessage(
+        error.response.data.message
+          .split('\n')
+          .map((line: string) => <div>{line}</div>),
+        {
+          okButton: true,
+          type: 'error',
+        }
+      )
+    }
+  }
+
   const handleFixOk = async (): Promise<void> => {
     if (!data) return
     setSubmitting(true)
-    const raw = await serverWalletAPI.getFixGen(
-      data.class.rarity,
-      data.tid.toString()
-    )
-    const signedMessage = await signTx(raw)
-    console.log('签名Object：')
-    console.log(raw)
-    console.log('签名结果：')
-    console.log(signedMessage)
-    sign(signedMessage, 'fix', [data.class.rarity, data.tid.toString()]).catch(
-      (e) => console.log(e)
-    )
+    try {
+      const raw = await serverWalletAPI.getFixGen(
+        data.class.rarity,
+        data.tid.toString()
+      )
+      const signedMessage = await signTx(raw)
+      console.log('签名Object：')
+      console.log(raw)
+      console.log('签名结果：')
+      console.log(signedMessage)
+      sign(signedMessage, 'fix', [
+        data.class.rarity,
+        data.tid.toString(),
+      ]).catch((e) => console.log(e))
+    } catch (error) {
+      handleGenError(error)
+      setSubmitting(false)
+      showFixModal(false)
+    }
   }
 
   const handleRefreshOk = async (): Promise<void> => {
@@ -536,17 +557,7 @@ export const Home: React.FC = () => {
         data.tid.toString(),
       ]).catch((e) => console.log(e))
     } catch (error: any) {
-      if (error.response?.data?.message) {
-        alertMessage(
-          error.response.data.message
-            .split('\n')
-            .map((line: string) => <div>{line}</div>),
-          {
-            okButton: true,
-            type: 'error',
-          }
-        )
-      }
+      handleGenError(error)
       setSubmitting(false)
       showRefreshModal(false)
     }
@@ -555,21 +566,27 @@ export const Home: React.FC = () => {
   const handleAddWordOk = async (words: NftWordData[]): Promise<void> => {
     if (!data) return
     setSubmitting(true)
-    const raw = await serverWalletAPI.getAddWordsGen(
-      data.class.rarity,
-      data.tid.toString(),
-      words
-    )
-    const signedMessage = await signTx(raw)
-    console.log('签名Object：')
-    console.log(raw)
-    console.log('签名结果：')
-    console.log(signedMessage)
-    sign(signedMessage, 'addwords', [
-      data.class.rarity,
-      data.tid.toString(),
-      words,
-    ]).catch((e) => console.log(e))
+    try {
+      const raw = await serverWalletAPI.getAddWordsGen(
+        data.class.rarity,
+        data.tid.toString(),
+        words
+      )
+      const signedMessage = await signTx(raw)
+      console.log('签名Object：')
+      console.log(raw)
+      console.log('签名结果：')
+      console.log(signedMessage)
+      sign(signedMessage, 'addwords', [
+        data.class.rarity,
+        data.tid.toString(),
+        words,
+      ]).catch((e) => console.log(e))
+    } catch (error) {
+      handleGenError(error)
+      setSubmitting(false)
+      showAddWordModal(false)
+    }
   }
 
   const slideSettings = {
