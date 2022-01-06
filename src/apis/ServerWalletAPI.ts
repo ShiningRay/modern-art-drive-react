@@ -80,7 +80,9 @@ export class ServerWalletAPI {
     sig: string
   ): Promise<any> {
     const url = `/add/${rarity}/${tid}`
-    return await this.axios.post<any>(url, { words, sig }).then((resp) => resp.data)
+    const resp = await this.axios.post<any>(url, { words, sig })
+
+    return resp.data
   }
 
   async getRecnetFix(): Promise<RecnetFixData[]> {
