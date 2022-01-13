@@ -19,6 +19,7 @@ import {
 } from '@ant-design/icons'
 import okImg from '../../assets/img/btn-ok.svg'
 import cancelImg from '../../assets/img/btn-cancel.svg'
+import usImg from '../../assets/img/us.jpg'
 import { useLocation } from 'react-router'
 import qs from 'qs'
 import System from '../../store/system'
@@ -669,7 +670,13 @@ export const Home: React.FC = () => {
             </>
           )}
           <div className="more">
-            <button className="page-title-button">更多作品阐释</button>
+            <div>
+              <button className="page-title-button">作品阐释</button>
+            </div>
+            <div>
+              <img src={usImg} alt="" />
+            </div>
+            <div>联系我们</div>
           </div>
         </div>
       </div>
