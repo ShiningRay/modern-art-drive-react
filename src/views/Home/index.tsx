@@ -405,7 +405,7 @@ const CurrentNftCard: React.FC<CurrentNftCardProps> = ({
               <a onClick={() => onFix(data)}>
                 <PushpinOutlined />
                 <span>
-                  <span>保留句子</span>
+                  <span>固定句子</span>
                   <span>Fix the phrase</span>
                 </span>
               </a>
@@ -687,7 +687,7 @@ export const Home: React.FC = () => {
         onOk={handleFixOk}
         text={
           <div>
-            <div>保留这个句子？确认后将不可刷新</div>
+            <div>固定这个句子？确认后将不可刷新</div>
             <div>
               Fix this Phrase？It would not be refreshed after conformation.
             </div>
@@ -695,7 +695,7 @@ export const Home: React.FC = () => {
         }
         title={
           <CommonPageTitle
-            title={`保留 #${data ? data.tid : ''}`}
+            title={`固定 #${data ? data.tid : ''}`}
             subTitle={`Fix #${data ? data.tid : ''}`}
             size="3"
           />
