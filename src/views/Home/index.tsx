@@ -606,7 +606,14 @@ export const Home: React.FC = () => {
           <CommonPageTitle
             title="我的驱动器"
             subTitle="My Driver"
-            extra={<button className="page-title-button">操作教程</button>}
+            extra={
+              <a
+                href="https://mp.weixin.qq.com/s?__biz=MzkzNzI4NzEyMg==&mid=2247484221&idx=1&sn=1eabeff4ad67a56b87804bc9edfea2c3&chksm=c2908f80f5e7069638a9cbc11962d27f0eef0b20c64bba0cf02bd8f639a0eae80e988a740b01&token=603166128&lang=zh_CN#rd"
+                target="_blank"
+              >
+                <button className="page-title-button">操作教程</button>
+              </a>
+            }
           />
           {nfts.length === 0 && (
             <div className="empty">
@@ -671,7 +678,12 @@ export const Home: React.FC = () => {
           )}
           <div className="more">
             <div>
-              <button className="page-title-button">作品阐释</button>
+              <a
+                href="https://digitalcompound.org/#/projects/crypto-art-driver"
+                target="_blank"
+              >
+                <button className="page-title-button">作品阐释</button>
+              </a>
             </div>
             <div>
               <img src={usImg} alt="" />
