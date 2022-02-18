@@ -6,22 +6,56 @@ import serverWalletAPI from '../../apis/ServerWalletAPI'
 import { sleep } from '../../utils'
 import './style.scss'
 import System from '../../store/system'
+import { getResultFromURL } from '@nervina-labs/flashsigner'
+import { LoginType } from '../../constants'
 
 export const LoginRedirect: React.FC = () => {
   const history = useHistory()
   const location = useLocation()
   const param = useParams<{ action: string }>()
-  const { parseLoginData, parseSignData, waitingSign, setWaitingSign } =
-    Unipass.useContainer()
+  const {
+    parseLoginData,
+    parseSignData,
+    waitingSign,
+    setWaitingSign,
+    onSetLoginType,
+  } = Unipass.useContainer()
   const { alertMessage, showAlertModal } = System.useContainer()
 
   useEffect(() => {
     const { action, args } = parseSuccessUrl(param.action)
-    const { unipass_ret: unipassRet } = qs.parse(location.search.slice(1))
+    const { unipass_ret: unipassRet, flashsigner_data: flashsignerData } =
+      qs.parse(location.search.slice(1))
+
+    if (flashsignerData) {
+      onSetLoginType(LoginType.Flashsigner)
+      getResultFromURL({
+        onLogin(res) {
+          console.log('onLogin', res)
+          parseLoginData({
+            email: 'me@admin.com',
+            pubkey: res.pubkey,
+            address: res.address,
+          })
+            .then(() => {
+              history.push('/')
+            })
+            .catch(() => {
+              console.log('e')
+            })
+        },
+      })
+
+      return
+    }
+
     if (!unipassRet) {
       history.push('/')
       return
     }
+
+    onSetLoginType(LoginType.Unipass)
+
     try {
       const data = JSON.parse(unipassRet as string)
       if (action === 'login') {

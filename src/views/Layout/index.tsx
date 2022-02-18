@@ -11,6 +11,7 @@ import Marquee from 'react-fast-marquee'
 import './style.scss'
 import serverWalletAPI, { RecnetFixData } from '../../apis/ServerWalletAPI'
 import { CommonAlertModal } from '../../components/CommonModal'
+import { LoginType } from '../../constants'
 
 // TODO: 是否要fix header
 // const HEADER_TOP = 100
@@ -18,7 +19,8 @@ import { CommonAlertModal } from '../../components/CommonModal'
 const Header: React.FC = ({ children }) => {
   const [recentFix, setRecnetFix] = useState<RecnetFixData[]>([])
   const { t } = useTranslation('trans')
-  const { login, maskedAddress, address, signout } = Unipass.useContainer()
+  const { fLogin, login, maskedAddress, address, signout } =
+    Unipass.useContainer()
 
   useEffect(() => {
     serverWalletAPI
@@ -26,6 +28,15 @@ const Header: React.FC = ({ children }) => {
       .then(setRecnetFix)
       .catch((e) => console.log(e))
   }, [])
+
+  const onLogin = (): void => {
+    const type = LoginType.Flashsigner
+    if (type === LoginType.Flashsigner) {
+      fLogin()
+    } else {
+      login()
+    }
+  }
 
   return (
     <>
@@ -55,7 +66,7 @@ const Header: React.FC = ({ children }) => {
                 </CopyToClipboard>
               </>
             ) : (
-              <a className="connect" onClick={login}>
+              <a className="connect" onClick={onLogin}>
                 连接钱包
               </a>
             )}

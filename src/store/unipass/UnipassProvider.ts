@@ -44,12 +44,15 @@ export default class UnipassProvider extends Provider {
     return this._recovery
   }
 
-  constructor(email: string, masterPubkey: string) {
+  constructor(email: string, masterPubkey: string, address?: string) {
     super(Platform.ckb)
     this._email = email
 
-    const addressStr = pubkeyToAddress(masterPubkey)
-    this.address = new Address(addressStr, AddressType.ckb)
+    this.address = new Address(
+      address ?? pubkeyToAddress(masterPubkey),
+      AddressType.ckb
+    )
+
     // console.log('this.address----', this.address)
   }
 

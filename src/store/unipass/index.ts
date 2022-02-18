@@ -5,11 +5,15 @@ import {
   CKB_NODE_URL,
   CKB_INDEXER_URL,
   CKB_CHAIN_ID,
+  LoginType,
 } from '../../constants'
 import PWCore, { IndexerCollector, Provider } from '@lay2/pw-core'
 import UnipassProvider from './UnipassProvider'
 import UnipassSigner from './UnipassSigner'
+import { Config, loginWithRedirect } from '@nervina-labs/flashsigner'
 import { useLocalStorage } from '../../hooks/useLocalStorage'
+
+Config.setChainType('testnet')
 
 function generateUnipassNewUrl(
   host: string,
@@ -64,7 +68,9 @@ export interface useUnipassProps {
   address: string | null
   maskedAddress: string | null
   provider: Provider | null
+  loginType: string | null
   login: () => void
+  fLogin: () => void
   parseLoginData: (data: unipassLoginData) => Promise<void>
   parseSignData: (data: unipassSignData, args: any) => Promise<void>
   sign: (message: string, label: string, args: any) => Promise<void>
@@ -72,11 +78,13 @@ export interface useUnipassProps {
   setWaitingSign: (waitingSign: WaitingSign | null) => void
   signout: () => void
   signTx: (raw: any) => Promise<any>
+  onSetLoginType: (type: LoginType) => void
 }
 
 export interface unipassLoginData {
   email: string
   pubkey: string
+  address?: string
 }
 
 export interface unipassSignData {
@@ -96,6 +104,7 @@ const CKBEnv = {
 }
 
 function useUnipass(): useUnipassProps {
+  const [loginType, setLoginType] = useState(null)
   const [address, setAddress] = useState<string | null>(null)
   const [provider, setProvider] = useState<Provider | null>(null)
   const [limitTime, setLimitTime] = useLocalStorage<string>('mad_limit', '0')
@@ -107,6 +116,12 @@ function useUnipass(): useUnipassProps {
     if (address === null) return null
     return `${address.slice(0, 5)}...${address.slice(-3)}`
   }, [address])
+
+  // flashsigner login
+  const fLogin = useCallback(() => {
+    const successUrl = generateSuccessUrl('fLogin')
+    loginWithRedirect(successUrl, {})
+  }, [])
 
   const login = useCallback(() => {
     const successUrl = generateSuccessUrl('login')
@@ -124,11 +139,11 @@ function useUnipass(): useUnipassProps {
   }, [setAddress, setProvider, setLimitTime, setPubkey])
 
   const updateUserInfo = useCallback(
-    async (email: string, pubkey: string) => {
+    async (email: string, pubkey: string, address?: string) => {
       if (!email || !pubkey) return
       PWCore.chainId = parseInt(CKBEnv.CHAIN_ID)
       await new PWCore(CKBEnv.NODE_URL).init(
-        new UnipassProvider(email, pubkey),
+        new UnipassProvider(email, pubkey, address),
         new IndexerCollector(CKBEnv.INDEXER_URL),
         parseInt(CKBEnv.CHAIN_ID)
       )
@@ -143,7 +158,7 @@ function useUnipass(): useUnipassProps {
   const parseLoginData = useCallback(
     async (data: unipassLoginData) => {
       console.log(data.pubkey)
-      await updateUserInfo(data.email, data.pubkey)
+      await updateUserInfo(data.email, data.pubkey, data.address)
       setLimitTime(`${new Date().getTime() + 7 * 24 * 3600 * 1000}`)
     },
     [updateUserInfo, setLimitTime]
@@ -184,6 +199,10 @@ function useUnipass(): useUnipassProps {
     return signedTx.message as any
   }, [])
 
+  const onSetLoginType = useCallback((type) => {
+    setLoginType(type)
+  }, [])
+
   useEffect((): void => {
     // 尝试登录
     if (new Date(parseInt(limitTime)) > new Date()) {
@@ -195,7 +214,10 @@ function useUnipass(): useUnipassProps {
     address,
     maskedAddress,
     provider,
+    fLogin,
     login,
+    loginType,
+    onSetLoginType,
     parseLoginData,
     parseSignData,
     waitingSign,
