@@ -44,6 +44,57 @@ export const LoginRedirect: React.FC = () => {
               console.log('e')
             })
         },
+        onSignMessage(res) {
+          const {
+            signature,
+            // 已签名的公钥
+            pubkey,
+            // 已签名的地址
+            address,
+            // 请求签名时的额外数据
+            extra,
+          } = res
+          console.log('onSignMessage', res)
+          parseSignData(
+            {
+              pubkey: pubkey,
+              sig: signature,
+              address: address,
+            },
+            {
+              label: extra?.label,
+              args: JSON.parse(extra?.args),
+            }
+          ).catch(() => {
+            console.log('e')
+          })
+        },
+        onSignRawMessage(res) {
+          const {
+            signature,
+            // 已签名的公钥
+            pubkey,
+            // 已签名的地址
+            address,
+            // 请求签名时的额外数据
+            extra,
+          } = res
+
+          console.log('onSignMessage', res)
+          parseSignData(
+            {
+              pubkey: pubkey,
+              sig: signature,
+              address: address,
+            },
+            {
+              label: extra?.label,
+              args: JSON.parse(extra?.args),
+            }
+          ).catch(() => {
+            console.log('e')
+          })
+        },
       })
 
       return
@@ -127,6 +178,7 @@ export const LoginRedirect: React.FC = () => {
             type: 'loading',
           }
         )
+        console.log('addwrlds', args[0], args[1], args[2], waitingSign.data.sig)
         serverWalletAPI
           .addWords(args[0], args[1], args[2], waitingSign.data.sig)
           .then(() => {

@@ -10,7 +10,11 @@ import {
 import PWCore, { IndexerCollector, Provider } from '@lay2/pw-core'
 import UnipassProvider from './UnipassProvider'
 import UnipassSigner from './UnipassSigner'
-import { Config, loginWithRedirect } from '@nervina-labs/flashsigner'
+import {
+  Config,
+  loginWithRedirect,
+  signMessageWithRedirect,
+} from '@nervina-labs/flashsigner'
 import { useLocalStorage } from '../../hooks/useLocalStorage'
 
 Config.setChainType('testnet')
@@ -68,9 +72,10 @@ export interface useUnipassProps {
   address: string | null
   maskedAddress: string | null
   provider: Provider | null
-  loginType: string | null
+  loginType: LoginType
   login: () => void
   fLogin: () => void
+  fSign: (message: string, label: string, args: any) => void
   parseLoginData: (data: unipassLoginData) => Promise<void>
   parseSignData: (data: unipassSignData, args: any) => Promise<void>
   sign: (message: string, label: string, args: any) => Promise<void>
@@ -90,6 +95,7 @@ export interface unipassLoginData {
 export interface unipassSignData {
   pubkey: string
   sig: string
+  address?: string
 }
 
 export interface WaitingSign {
@@ -104,7 +110,10 @@ const CKBEnv = {
 }
 
 function useUnipass(): useUnipassProps {
-  const [loginType, setLoginType] = useState(null)
+  const [loginType, setLoginType] = useLocalStorage(
+    'login_type',
+    LoginType.Unknow
+  )
   const [address, setAddress] = useState<string | null>(null)
   const [addressLocal, setAddressLocal] = useLocalStorage<string>(
     'mad_address',
@@ -194,9 +203,26 @@ function useUnipass(): useUnipassProps {
         pubkey,
         message,
       })
-      window.location.replace(url)
+      console.log('signURL', url)
+      // window.location.replace(url)
     },
     [pubkey]
+  )
+
+  const fSign = useCallback(
+    (message: string, label: string, args: any = []) => {
+      console.log('message', message)
+      const successUrl = generateSuccessUrl('fSign')
+      signMessageWithRedirect(successUrl, {
+        message,
+        isRaw: true,
+        extra: {
+          label,
+          args: JSON.stringify(args),
+        },
+      })
+    },
+    [address]
   )
 
   const signTx = useCallback(async (raw: any) => {
@@ -205,14 +231,14 @@ function useUnipass(): useUnipassProps {
     return signedTx.message as any
   }, [])
 
-  const onSetLoginType = useCallback((type) => {
+  const onSetLoginType = useCallback((type: LoginType) => {
     setLoginType(type)
   }, [])
 
   useEffect((): void => {
     // 尝试登录
     if (new Date(parseInt(limitTime)) > new Date()) {
-      if (addressLocal) {
+      if (loginType === LoginType.Flashsigner) {
         updateUserInfo(email, pubkey, addressLocal).catch((e) => console.log(e))
       } else {
         updateUserInfo(email, pubkey).catch((e) => console.log(e))
@@ -225,6 +251,7 @@ function useUnipass(): useUnipassProps {
     maskedAddress,
     provider,
     fLogin,
+    fSign,
     login,
     loginType,
     onSetLoginType,

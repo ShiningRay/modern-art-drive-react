@@ -23,6 +23,7 @@ import usImg from '../../assets/img/us.jpg'
 import { useLocation } from 'react-router'
 import qs from 'qs'
 import System from '../../store/system'
+import { LoginType } from '../../constants'
 
 interface NftImageModalProps extends CommonModalProps {
   data: NftData | null
@@ -437,7 +438,7 @@ export const Home: React.FC = () => {
   const [nfts, setNfts] = useState<NftData[]>([])
   const [data, setData] = useState<NftData | null>(null)
   const [currentShowData, setCurrentShowData] = useState<NftData | null>(null)
-  const { address, sign, signTx } = Unipass.useContainer()
+  const { address, sign, signTx, loginType, fSign } = Unipass.useContainer()
   const { alertMessage } = System.useContainer()
   const [isMobile] = useDetectMobile()
   const location = useLocation()
@@ -524,15 +525,22 @@ export const Home: React.FC = () => {
         data.class.rarity,
         data.tid.toString()
       )
-      const signedMessage = await signTx(raw)
-      console.log('签名Object：')
-      console.log(raw)
-      console.log('签名结果：')
-      console.log(signedMessage)
-      sign(signedMessage, 'fix', [
-        data.class.rarity,
-        data.tid.toString(),
-      ]).catch((e) => console.log(e))
+      console.log('raw', raw)
+      if (loginType === LoginType.Flashsigner) {
+        fSign(JSON.stringify(raw), 'fix', [
+          data.class.rarity,
+          data.tid.toString(),
+        ])
+      } else {
+        const signedMessage = await signTx(raw)
+        console.log('签名Object：')
+        console.log('签名结果：')
+        console.log('signedMessage', signedMessage)
+        sign(signedMessage, 'fix', [
+          data.class.rarity,
+          data.tid.toString(),
+        ]).catch((e) => console.log(e))
+      }
     } catch (error) {
       handleGenError(error)
       setSubmitting(false)
@@ -548,15 +556,22 @@ export const Home: React.FC = () => {
         data.class.rarity,
         data.tid.toString()
       )
-      const signedMessage = await signTx(raw)
-      console.log('签名Object：')
-      console.log(raw)
-      console.log('签名结果：')
-      console.log(signedMessage)
-      sign(signedMessage, 'refresh', [
-        data.class.rarity,
-        data.tid.toString(),
-      ]).catch((e) => console.log(e))
+      if (loginType === LoginType.Flashsigner) {
+        fSign(JSON.stringify(raw), 'refresh', [
+          data.class.rarity,
+          data.tid.toString(),
+        ])
+      } else {
+        const signedMessage = await signTx(raw)
+        console.log('签名Object：')
+        console.log(raw)
+        console.log('签名结果：')
+        console.log(signedMessage)
+        sign(signedMessage, 'refresh', [
+          data.class.rarity,
+          data.tid.toString(),
+        ]).catch((e) => console.log(e))
+      }
     } catch (error: any) {
       handleGenError(error)
       setSubmitting(false)
@@ -573,16 +588,24 @@ export const Home: React.FC = () => {
         data.tid.toString(),
         words
       )
-      const signedMessage = await signTx(raw)
-      console.log('签名Object：')
-      console.log(raw)
-      console.log('签名结果：')
-      console.log(signedMessage)
-      sign(signedMessage, 'addwords', [
-        data.class.rarity,
-        data.tid.toString(),
-        words,
-      ]).catch((e) => console.log(e))
+      if (loginType === LoginType.Flashsigner) {
+        fSign(JSON.stringify(raw), 'addwords', [
+          data.class.rarity,
+          data.tid.toString(),
+          words,
+        ])
+      } else {
+        const signedMessage = await signTx(raw)
+        console.log('签名Object：')
+        console.log(raw)
+        console.log('签名结果：')
+        console.log(signedMessage)
+        sign(signedMessage, 'addwords', [
+          data.class.rarity,
+          data.tid.toString(),
+          words,
+        ]).catch((e) => console.log(e))
+      }
     } catch (error) {
       handleGenError(error)
       setSubmitting(false)
