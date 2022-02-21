@@ -106,6 +106,10 @@ const CKBEnv = {
 function useUnipass(): useUnipassProps {
   const [loginType, setLoginType] = useState(null)
   const [address, setAddress] = useState<string | null>(null)
+  const [addressLocal, setAddressLocal] = useLocalStorage<string>(
+    'mad_address',
+    ''
+  )
   const [provider, setProvider] = useState<Provider | null>(null)
   const [limitTime, setLimitTime] = useLocalStorage<string>('mad_limit', '0')
   const [pubkey, setPubkey] = useLocalStorage<string>('mad_pubkey', '')
@@ -132,11 +136,12 @@ function useUnipass(): useUnipassProps {
   }, [])
 
   const signout = useCallback(() => {
+    setAddressLocal('')
     setAddress(null)
     setProvider(null)
     setLimitTime('0')
     setPubkey('')
-  }, [setAddress, setProvider, setLimitTime, setPubkey])
+  }, [setAddress, setProvider, setLimitTime, setPubkey, setAddressLocal])
 
   const updateUserInfo = useCallback(
     async (email: string, pubkey: string, address?: string) => {
@@ -151,6 +156,7 @@ function useUnipass(): useUnipassProps {
       setPubkey(pubkey)
       setProvider(PWCore.provider)
       setAddress(PWCore.provider.address.addressString)
+      address && setAddressLocal(address)
     },
     [setEmail, setPubkey, setProvider, setAddress]
   )
@@ -206,7 +212,11 @@ function useUnipass(): useUnipassProps {
   useEffect((): void => {
     // 尝试登录
     if (new Date(parseInt(limitTime)) > new Date()) {
-      updateUserInfo(email, pubkey).catch((e) => console.log(e))
+      if (addressLocal) {
+        updateUserInfo(email, pubkey, addressLocal).catch((e) => console.log(e))
+      } else {
+        updateUserInfo(email, pubkey).catch((e) => console.log(e))
+      }
     }
   }, [])
 
