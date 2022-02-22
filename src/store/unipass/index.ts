@@ -204,7 +204,7 @@ function useUnipass(): useUnipassProps {
         message,
       })
       console.log('signURL', url)
-      // window.location.replace(url)
+      window.location.replace(url)
     },
     [pubkey]
   )

@@ -12,6 +12,7 @@ import './style.scss'
 import serverWalletAPI, { RecnetFixData } from '../../apis/ServerWalletAPI'
 import { CommonAlertModal } from '../../components/CommonModal'
 import { LoginType } from '../../constants'
+import LoginDialog, { LoginDialogControl } from '../LoginDialog'
 
 // TODO: 是否要fix header
 // const HEADER_TOP = 100
@@ -22,6 +23,8 @@ const Header: React.FC = ({ children }) => {
   const { fLogin, login, maskedAddress, address, signout } =
     Unipass.useContainer()
 
+  const { setOpen } = LoginDialogControl.useContainer()
+
   useEffect(() => {
     serverWalletAPI
       .getRecnetFix()
@@ -30,12 +33,13 @@ const Header: React.FC = ({ children }) => {
   }, [])
 
   const onLogin = (): void => {
-    const type = LoginType.Flashsigner
-    if (type === LoginType.Flashsigner) {
-      fLogin()
-    } else {
-      login()
-    }
+    setOpen(true)
+    // const type = LoginType.Unipass
+    // if (type === LoginType.Flashsigner) {
+    // fLogin()
+    // } else {
+    // login()
+    // }
   }
 
   return (
@@ -112,7 +116,10 @@ export const Layout: React.FC = ({ children }) => {
 
   return (
     <>
-      <Header />
+      <LoginDialogControl.Provider>
+        <Header />
+        <LoginDialog />
+      </LoginDialogControl.Provider>
       <div id="pageContent">{children}</div>
       <CommonAlertModal />
       <Footer />
