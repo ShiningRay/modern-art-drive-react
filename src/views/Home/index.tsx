@@ -527,9 +527,15 @@ export const Home: React.FC = () => {
       )
       console.log('raw', raw)
       if (loginType === LoginType.Flashsigner) {
-        fSign(JSON.stringify(raw), 'fix', [
+        const signedMessage = await signTx(raw)
+        console.log('raw', raw)
+        console.log('signedMessage', signedMessage)
+
+        fSign(signedMessage, 'fix', [
+          // fSign(JSON.stringify(raw), 'fix', [
           data.class.rarity,
           data.tid.toString(),
+          false,
         ])
       } else {
         const signedMessage = await signTx(raw)
@@ -557,10 +563,16 @@ export const Home: React.FC = () => {
         data.tid.toString()
       )
       if (loginType === LoginType.Flashsigner) {
-        fSign(JSON.stringify(raw), 'refresh', [
-          data.class.rarity,
-          data.tid.toString(),
-        ])
+        const signedMessage = await signTx(raw)
+        console.log('raw', raw)
+        console.log('signedMessage', signedMessage)
+
+        fSign(
+          signedMessage,
+          'refresh',
+          [data.class.rarity, data.tid.toString()],
+          false
+        )
       } else {
         const signedMessage = await signTx(raw)
         console.log('签名Object：')

@@ -58,7 +58,7 @@ export const LoginRedirect: React.FC = () => {
           parseSignData(
             {
               pubkey: pubkey,
-              sig: signature,
+              sig: `0x${signature}`,
               address: address,
             },
             {
@@ -84,7 +84,7 @@ export const LoginRedirect: React.FC = () => {
           parseSignData(
             {
               pubkey: pubkey,
-              sig: signature,
+              sig: `0x${signature}`,
               address: address,
             },
             {

@@ -75,7 +75,7 @@ export interface useUnipassProps {
   loginType: LoginType
   login: () => void
   fLogin: () => void
-  fSign: (message: string, label: string, args: any) => void
+  fSign: (message: string, label: string, args: any, isRaw?: boolean) => void
   parseLoginData: (data: unipassLoginData) => Promise<void>
   parseSignData: (data: unipassSignData, args: any) => Promise<void>
   sign: (message: string, label: string, args: any) => Promise<void>
@@ -210,12 +210,12 @@ function useUnipass(): useUnipassProps {
   )
 
   const fSign = useCallback(
-    (message: string, label: string, args: any = []) => {
+    (message: string, label: string, args: any = [], isRaw = true) => {
       console.log('message', message)
       const successUrl = generateSuccessUrl('fSign')
       signMessageWithRedirect(successUrl, {
         message,
-        isRaw: true,
+        isRaw: isRaw,
         extra: {
           label,
           args: JSON.stringify(args),

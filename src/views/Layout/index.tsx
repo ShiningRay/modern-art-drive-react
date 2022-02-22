@@ -11,7 +11,6 @@ import Marquee from 'react-fast-marquee'
 import './style.scss'
 import serverWalletAPI, { RecnetFixData } from '../../apis/ServerWalletAPI'
 import { CommonAlertModal } from '../../components/CommonModal'
-import { LoginType } from '../../constants'
 import LoginDialog, { LoginDialogControl } from '../LoginDialog'
 
 // TODO: 是否要fix header
@@ -20,8 +19,7 @@ import LoginDialog, { LoginDialogControl } from '../LoginDialog'
 const Header: React.FC = ({ children }) => {
   const [recentFix, setRecnetFix] = useState<RecnetFixData[]>([])
   const { t } = useTranslation('trans')
-  const { fLogin, login, maskedAddress, address, signout } =
-    Unipass.useContainer()
+  const { maskedAddress, address, signout } = Unipass.useContainer()
 
   const { setOpen } = LoginDialogControl.useContainer()
 
@@ -34,12 +32,6 @@ const Header: React.FC = ({ children }) => {
 
   const onLogin = (): void => {
     setOpen(true)
-    // const type = LoginType.Unipass
-    // if (type === LoginType.Flashsigner) {
-    // fLogin()
-    // } else {
-    // login()
-    // }
   }
 
   return (
