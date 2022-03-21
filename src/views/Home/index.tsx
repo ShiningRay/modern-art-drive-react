@@ -210,7 +210,7 @@ const NftAddWrodModal: React.FC<NftAddWordModalProps> = ({
   return (
     <CommonModal
       {...rest}
-      title={<CommonPageTitle title="添加词汇" subTitle="Add word" size="3" />}
+      title={<CommonPageTitle title="添加词汇" subTitle="Add terms" size="3" />}
       className="nft-add-word-modal"
     >
       <div className="content">
@@ -398,7 +398,7 @@ const CurrentNftCard: React.FC<CurrentNftCardProps> = ({
                 <RedoOutlined />
                 <span>
                   <span>刷新句子</span>
-                  <span>Refresh</span>
+                  <span>Refresh Sentences</span>
                 </span>
               </a>
             </div>
@@ -407,7 +407,7 @@ const CurrentNftCard: React.FC<CurrentNftCardProps> = ({
                 <PushpinOutlined />
                 <span>
                   <span>固定句子</span>
-                  <span>Fix the phrase</span>
+                  <span>Fix Sentences</span>
                 </span>
               </a>
             </div>
@@ -419,7 +419,7 @@ const CurrentNftCard: React.FC<CurrentNftCardProps> = ({
               <PlusSquareOutlined />
               <span>
                 <span>添加词汇</span>
-                <span>Add words</span>
+                <span>Add Terms</span>
               </span>
             </a>
           </div>
@@ -640,13 +640,15 @@ export const Home: React.FC = () => {
         <div className="container">
           <CommonPageTitle
             title="我的驱动器"
-            subTitle="My Driver"
+            subTitle="My Drive"
             extra={
               <a
                 href="https://mp.weixin.qq.com/s?__biz=MzkzNzI4NzEyMg==&mid=2247484221&idx=1&sn=1eabeff4ad67a56b87804bc9edfea2c3&chksm=c2908f80f5e7069638a9cbc11962d27f0eef0b20c64bba0cf02bd8f639a0eae80e988a740b01&token=603166128&lang=zh_CN#rd"
                 target="_blank"
               >
-                <button className="page-title-button">操作教程</button>
+                <button className="page-title-button">
+                  操作教程 Operation Tutorial
+                </button>
               </a>
             }
           />
@@ -698,7 +700,7 @@ export const Home: React.FC = () => {
           )}
           {fixedNfts.length > 0 && (
             <>
-              <CommonPageTitle title="收藏夹" subTitle="FAVORITES" size="2" />
+              <CommonPageTitle title="收藏夹" subTitle="COLLECTION" size="2" />
               <div className="fixed-driver">
                 {fixedNfts.map((nft, i) => (
                   <NftCard
@@ -717,13 +719,15 @@ export const Home: React.FC = () => {
                 href="https://digitalcompound.org/#/projects/crypto-art-driver"
                 target="_blank"
               >
-                <button className="page-title-button">作品阐释</button>
+                <button className="page-title-button">
+                  作品阐释 More Info
+                </button>
               </a>
             </div>
             <div>
               <img src={usImg} alt="" />
             </div>
-            <div>联系我们</div>
+            <div>联系我们 Contact Us</div>
           </div>
         </div>
       </div>
@@ -736,7 +740,7 @@ export const Home: React.FC = () => {
           <div>
             <div>固定这个句子？确认后将不可刷新</div>
             <div>
-              Fix this Phrase？It would not be refreshed after conformation.
+              Fix this sentence? would not be refreshed after conformation.
             </div>
           </div>
         }
@@ -757,7 +761,7 @@ export const Home: React.FC = () => {
         text={
           <div>
             <div>确认刷新驱动器？</div>
-            <div>Confirm to refresh this Driver？</div>
+            <div>Confirm to refresh this Drive？</div>
           </div>
         }
         title={
