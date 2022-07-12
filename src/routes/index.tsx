@@ -9,13 +9,11 @@ import {
 import { I18nextProvider } from 'react-i18next'
 import i18n from '../i18n'
 import { Home } from '../views/Home'
-import { LoginRedirect } from '../views/LoginRedirect'
 import { Layout } from '../views/Layout'
 import Store from '../store'
 
 export enum RoutePath {
   Home = '/',
-  LoginRedirect = '/redirect/:action',
 }
 
 export const RouterContext = React.createContext({
@@ -60,12 +58,6 @@ export const routes: OutlandRouterProps[] = [
     exact: true,
     key: 'Home',
     path: RoutePath.Home,
-  },
-  {
-    component: LoginRedirect,
-    exact: true,
-    key: 'LoginRedirect',
-    path: RoutePath.LoginRedirect,
   },
 ]
 
