@@ -8,8 +8,6 @@ import {
   ASSET_LOCK_CODE_HASH,
   AGGREGATOR_URL,
 } from '../../constants'
-import UnipassProvider from './UnipassProvider'
-import UnipassSigner from './UnipassSigner'
 import { addWitnessArgType } from './toPwTransaction'
 import { useLocalStorage } from '../../hooks/useLocalStorage'
 import UP, { UPAuthMessage, UPAuthResponse } from 'up-core-test'
@@ -64,12 +62,6 @@ export interface useUnipassProps {
   sign: (message: string) => Promise<UPAuthResponse>
   signUnipass: (tx: Transaction) => Promise<Transaction>
   signout: () => void
-  signTx: (raw: any) => Promise<any>
-}
-
-export interface unipassLoginData {
-  email: string
-  pubkey: string
 }
 
 export interface unipassSignData {
@@ -78,19 +70,11 @@ export interface unipassSignData {
   sig: string
 }
 
-const CKBEnv = {
-  NODE_URL: CKB_NODE_URL,
-  INDEXER_URL: CKB_INDEXER_URL,
-  CHAIN_ID: CKB_CHAIN_ID,
-}
-
 function useUnipass(): useUnipassProps {
   const [address, setAddress] = useState<string | null>(null)
   const [provider, setProvider] = useState<Provider | null>(null)
   const [limitTime, setLimitTime] = useLocalStorage<string>('mad_limit', '0')
   const [username, setUsername] = useLocalStorage<string>('mad_username', '')
-  const [pubkey, setPubkey] = useLocalStorage<string>('mad_pubkey', '')
-  const [email, setEmail] = useLocalStorage<string>('mad_email', '')
 
   const maskedAddress = useMemo((): string | null => {
     if (address === null) return null
@@ -126,6 +110,7 @@ function useUnipass(): useUnipassProps {
       const indexerCollector = new IndexerCollector(CKB_INDEXER_URL)
       const balance = await indexerCollector.getBalance(_address)
       console.log('balance', balance)
+      setLimitTime(`${new Date().getTime() + 7 * 24 * 3600 * 1000}`)
       // this.myBalance = balance.toString()
     } catch (err) {
       // this.$message.error(err as string)
@@ -137,24 +122,32 @@ function useUnipass(): useUnipassProps {
     setAddress(null)
     setProvider(null)
     setLimitTime('0')
-    setPubkey('')
-  }, [setAddress, setProvider, setLimitTime, setPubkey])
+  }, [setAddress, setProvider, setLimitTime])
 
   const updateUserInfo = useCallback(
-    async (email: string, pubkey: string) => {
-      if (!email || !pubkey) return
-      PWCore.chainId = parseInt(CKBEnv.CHAIN_ID)
-      await new PWCore(CKBEnv.NODE_URL).init(
-        new UnipassProvider(email, pubkey),
-        new IndexerCollector(CKBEnv.INDEXER_URL),
-        parseInt(CKBEnv.CHAIN_ID)
-      )
-      setEmail(email)
-      setPubkey(pubkey)
-      setProvider(PWCore.provider)
-      setAddress(PWCore.provider.address.addressString)
+    async (username: string) => {
+      if (!username) return
+
+      UP.config({
+        domain: UNIPASS_URL,
+        // domain: 'localhost:3000',
+        // protocol: 'http',
+      })
+      PWCore.setChainId(Number(CKB_CHAIN_ID))
+      UPCKB.config({
+        upSnapshotUrl: `${AGGREGATOR_URL}/snapshot/`,
+        chainID: Number(CKB_CHAIN_ID),
+        ckbIndexerUrl: CKB_INDEXER_URL,
+        ckbNodeUrl: CKB_NODE_URL,
+        upLockCodeHash: ASSET_LOCK_CODE_HASH,
+      })
+      const provider = new UPCoreSimpleProvier(username, ASSET_LOCK_CODE_HASH)
+      const _address: Address = UPCKB.getCKBAddress(username)
+      const myAddress = _address.toCKBAddress()
+      setAddress(myAddress)
+      setProvider(provider)
     },
-    [setEmail, setPubkey, setProvider, setAddress]
+    [setProvider, setAddress]
   )
 
   const signUnipass = useCallback(async (tx: Transaction) => {
@@ -210,16 +203,11 @@ function useUnipass(): useUnipassProps {
     [username]
   )
 
-  const signTx = useCallback(async (raw: any) => {
-    const signer = new UnipassSigner()
-    const [signedTx] = await signer.toMessages(raw)
-    return signedTx.message as any
-  }, [])
-
   useEffect((): void => {
+    console.log('尝试登录', username, limitTime)
     // 尝试登录
     if (new Date(parseInt(limitTime)) > new Date()) {
-      updateUserInfo(email, pubkey).catch((e) => console.log(e))
+      updateUserInfo(username).catch((e) => console.log(e))
     }
   }, [])
 
@@ -231,7 +219,6 @@ function useUnipass(): useUnipassProps {
     signUnipass,
     sign,
     signout,
-    signTx,
   }
 }
 

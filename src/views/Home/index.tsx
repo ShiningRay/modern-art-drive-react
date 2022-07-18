@@ -510,7 +510,7 @@ export const Home: React.FC = () => {
       alertMessage(
         error.response.data.message
           .split('\n')
-          .map((line: string) => <div>{line}</div>),
+          .map((line: string) => <div key={line}>{line}</div>),
         {
           okButton: true,
           type: 'error',
@@ -568,16 +568,20 @@ export const Home: React.FC = () => {
   const handleRefreshOk = async (): Promise<void> => {
     if (!data) return
     setSubmitting(true)
+    let blocking = false
 
     const raw = await serverWalletAPI
       .getRefreshGen(data.class.rarity, data.tid.toString())
       .catch((error) => {
         handleGenError(error)
+        blocking = true
       })
       .finally(() => {
         setSubmitting(false)
         showRefreshModal(false)
       })
+
+    if (blocking) return
 
     console.log('[handleRefreshOk.raw]', raw)
     const tx = await signUnipass(await rawTransactionToPWTransaction(raw))
