@@ -523,157 +523,146 @@ export const Home: React.FC = () => {
     if (!data) return
     setSubmitting(true)
 
-    const raw = await serverWalletAPI
-      .getFixGen(data.class.rarity, data.tid.toString())
-      .catch((error) => {
-        handleGenError(error)
-      })
-      .finally(() => {
-        setSubmitting(false)
-        showFixModal(false)
-      })
-    const tx = await signUnipass(await rawTransactionToPWTransaction(raw))
+    try {
+      const raw = await serverWalletAPI
+        .getFixGen(data.class.rarity, data.tid.toString())
+        .finally(() => {
+          setSubmitting(false)
+          showFixModal(false)
+        })
+      const tx = await signUnipass(await rawTransactionToPWTransaction(raw))
 
-    alertMessage(
-      <>
-        <div>正在固定你的驱动器</div>
-        <div>Fixing your driver...</div>
-      </>
-    )
-    // setText('Fixing your nft...')
-    serverWalletAPI
-      .fixNft(data.class.rarity, data.tid.toString(), tx.transform())
-      .then(() => {
-        alertMessage(
-          <>
-            <div>固定成功，稍后片刻</div>
-            <div>Fix success, update at 3s.</div>
-          </>
-        )
-      })
-      .then(async () => {
-        await sleep(3000)
-        if (address) {
-          initNfts(address).catch((e) => console.log(e))
-        }
-      })
-      .catch((error) => {
-        handleGenError(error)
-      })
-      .finally(() => {
-        showAlertModal(false)
-      })
+      alertMessage(
+        <>
+          <div>正在固定你的驱动器</div>
+          <div>Fixing your driver...</div>
+        </>
+      )
+      // setText('Fixing your nft...')
+      serverWalletAPI
+        .fixNft(data.class.rarity, data.tid.toString(), tx.transform())
+        .then(() => {
+          alertMessage(
+            <>
+              <div>固定成功，稍后片刻</div>
+              <div>Fix success, update at 3s.</div>
+            </>
+          )
+        })
+        .then(async () => {
+          await sleep(3000)
+          if (address) {
+            initNfts(address).catch((e) => console.log(e))
+          }
+        })
+        .finally(() => {
+          showAlertModal(false)
+        })
+    } catch (error) {
+      handleGenError(error)
+    }
   }
 
   const handleRefreshOk = async (): Promise<void> => {
     if (!data) return
     setSubmitting(true)
-    let blocking = false
+    try {
+      const raw = await serverWalletAPI
+        .getRefreshGen(data.class.rarity, data.tid.toString())
+        .finally(() => {
+          setSubmitting(false)
+          showRefreshModal(false)
+        })
 
-    const raw = await serverWalletAPI
-      .getRefreshGen(data.class.rarity, data.tid.toString())
-      .catch((error) => {
-        handleGenError(error)
-        blocking = true
-      })
-      .finally(() => {
-        setSubmitting(false)
-        showRefreshModal(false)
-      })
+      console.log('[handleRefreshOk.raw]', raw)
+      const tx = await signUnipass(await rawTransactionToPWTransaction(raw))
 
-    if (blocking) return
-
-    console.log('[handleRefreshOk.raw]', raw)
-    const tx = await signUnipass(await rawTransactionToPWTransaction(raw))
-
-    alertMessage(
-      <>
-        <div>正在刷新你的驱动器</div>
-        <div>Refreshing your driver...</div>
-      </>,
-      {
-        type: 'loading',
-      }
-    )
-
-    serverWalletAPI
-      .refreshNft(data.class.rarity, data.tid.toString(), tx.transform())
-      .then(() => {
-        alertMessage(
-          <>
-            <div>刷新成功，稍后片刻</div>
-            <div>Refresh success, update at 3s.</div>
-          </>,
-          {
-            type: 'loading',
-          }
-        )
-      })
-      .then(async () => {
-        await sleep(3000)
-        if (address) {
-          initNfts(address).catch((e) => console.log(e))
+      alertMessage(
+        <>
+          <div>正在刷新你的驱动器</div>
+          <div>Refreshing your driver...</div>
+        </>,
+        {
+          type: 'loading',
         }
-      })
-      .catch((error) => {
-        handleGenError(error)
-      })
-      .finally(() => {
-        showAlertModal(false)
-      })
+      )
+
+      serverWalletAPI
+        .refreshNft(data.class.rarity, data.tid.toString(), tx.transform())
+        .then(() => {
+          alertMessage(
+            <>
+              <div>刷新成功，稍后片刻</div>
+              <div>Refresh success, update at 3s.</div>
+            </>,
+            {
+              type: 'loading',
+            }
+          )
+        })
+        .then(async () => {
+          await sleep(3000)
+          if (address) {
+            initNfts(address).catch((e) => console.log(e))
+          }
+        })
+        .finally(() => {
+          showAlertModal(false)
+        })
+    } catch (error) {
+      handleGenError(error)
+    }
   }
 
   const handleAddWordOk = async (words: NftWordData[]): Promise<void> => {
     if (!data) return
     setSubmitting(true)
-    const raw = await serverWalletAPI
-      .getAddWordsGen(data.class.rarity, data.tid.toString(), words)
-      .catch((error) => {
-        handleGenError(error)
-      })
-      .finally(() => {
-        setSubmitting(false)
-        showAddWordModal(false)
-      })
+    try {
+      const raw = await serverWalletAPI
+        .getAddWordsGen(data.class.rarity, data.tid.toString(), words)
+        .finally(() => {
+          setSubmitting(false)
+          showAddWordModal(false)
+        })
 
-    console.log('[rawTx]', raw)
-    const tx = await signUnipass(await rawTransactionToPWTransaction(raw))
+      console.log('[rawTx]', raw)
+      const tx = await signUnipass(await rawTransactionToPWTransaction(raw))
 
-    alertMessage(
-      <>
-        <div>正在添加你的词条</div>
-        <div>Adding your words...</div>
-      </>,
-      {
-        type: 'loading',
-      }
-    )
-
-    serverWalletAPI
-      .addWords(data.class.rarity, data.tid, words, tx.transform())
-      .then(() => {
-        alertMessage(
-          <>
-            <div>添加成功，稍等片刻</div>
-            <div>Add words success, update at 3s.</div>
-          </>,
-          {
-            type: 'loading',
-          }
-        )
-      })
-      .then(async () => {
-        await sleep(3000)
-        if (address) {
-          initNfts(address).catch((e) => console.log(e))
+      alertMessage(
+        <>
+          <div>正在添加你的词条</div>
+          <div>Adding your words...</div>
+        </>,
+        {
+          type: 'loading',
         }
-      })
-      .catch((error) => {
-        handleGenError(error)
-      })
-      .finally(() => {
-        showAlertModal(false)
-      })
+      )
+
+      serverWalletAPI
+        .addWords(data.class.rarity, data.tid, words, tx.transform())
+        .then(() => {
+          alertMessage(
+            <>
+              <div>添加成功，稍等片刻</div>
+              <div>Add words success, update at 3s.</div>
+            </>,
+            {
+              type: 'loading',
+            }
+          )
+        })
+        .then(async () => {
+          await sleep(3000)
+          if (address) {
+            initNfts(address).catch((e) => console.log(e))
+          }
+        })
+        .finally(() => {
+          showAlertModal(false)
+        })
+    } catch (error) {
+      handleGenError(error)
+    }
   }
 
   const slideSettings = {
