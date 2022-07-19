@@ -8,7 +8,7 @@
   },
   "scripts": {
     "dev": "craco start",
-    "build": "craco build",
+    "build": "NODE_OPTIONS=--max_old_space_size=8192 craco build",
     "start": "serve -s build",
     "lint": "eslint src",
     "mock": "http-server ./public",
