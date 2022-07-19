@@ -23,10 +23,11 @@ import PWCore, {
   DefaultSigner,
   CellDep,
 } from '@lay2/pw-core'
-import UPCKB, {
+import UPCKB from '../../assets/lib/up-ckb'
+import {
   fetchAssetLockProof,
   completeTxWithProof,
-} from '../../assets/lib/up-ckb'
+} from '../../assets/lib/up-ckb/up-lock-proof'
 import { UPCoreSimpleProvier } from '../../assets/lib/up-core-simple-provider'
 
 export function toHex(str: string): string {

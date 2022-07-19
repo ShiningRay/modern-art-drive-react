@@ -1,30 +1,23 @@
+import { Reader } from '@lay2/pw-core';
+export class Bytes {
+  constructor(reader: Reader);
+  validate(compatible: boolean);
+  raw(): ArrayBuffer;
+  indexAt(i: number): number;
+  length(): number;
+}
+
+export class BytesOpt {
+  constructor(reader: Reader);
+  validate(compatible: boolean);
+  value(): Bytes;
+  hasValue(): boolean;
+}
+
 export class WitnessArgs {
-    constructor(reader: any, { validate }?: {
-        validate?: boolean;
-    });
-    view: DataView;
-    validate(compatible?: boolean): void;
-    getLock(): BytesOpt;
-    getInputType(): BytesOpt;
-    getOutputType(): BytesOpt;
+  constructor(reader: Reader);
+  validate(compatible: boolean);
+  getLock(): BytesOpt;
+  getInputType(): BytesOpt;
+  getOutputType(): BytesOpt;
 }
-declare class BytesOpt {
-    constructor(reader: any, { validate }?: {
-        validate?: boolean;
-    });
-    view: DataView;
-    validate(compatible?: boolean): void;
-    value(): Bytes;
-    hasValue(): boolean;
-}
-declare class Bytes {
-    constructor(reader: any, { validate }?: {
-        validate?: boolean;
-    });
-    view: DataView;
-    validate(compatible?: boolean): void;
-    raw(): ArrayBuffer;
-    indexAt(i: any): number;
-    length(): number;
-}
-export {};
