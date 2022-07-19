@@ -67,22 +67,22 @@ export class ServerWalletAPI {
   async fixNft(
     rarity: string | number,
     tid: string | number,
-    sig: string
+    tx: object
   ): Promise<any> {
-    const url = `/fix/${rarity}/${tid}`
-    return await this.axios.post<any>(url, { sig }).then((resp) => resp.data)
+    const url = `/v2/fix/${rarity}/${tid}`
+    return await this.axios.post<any>(url, { tx }).then((resp) => resp.data)
   }
 
   async addWords(
     rarity: string | number,
     tid: string | number,
     words: NftWordData[],
-    sig: string
+    tx: object
   ): Promise<any> {
-    const url = `/add/${rarity}/${tid}`
-    const resp = await this.axios.post<any>(url, { words, sig })
-
-    return resp.data
+    const url = `/v2/add/${rarity}/${tid}`
+    return await this.axios
+      .post<any>(url, { words, tx })
+      .then((resp) => resp.data)
   }
 
   async getRecnetFix(): Promise<RecnetFixData[]> {
@@ -93,10 +93,10 @@ export class ServerWalletAPI {
   async refreshNft(
     rarity: string | number,
     tid: string | number,
-    sig: string
+    tx: object
   ): Promise<any> {
-    const url = `/refresh/${rarity}/${tid}`
-    return await this.axios.post<any>(url, { sig }).then((resp) => resp.data)
+    const url = `/v2/refresh/${rarity}/${tid}`
+    return await this.axios.post<any>(url, { tx }).then((resp) => resp.data)
   }
 
   async getRefreshGen(

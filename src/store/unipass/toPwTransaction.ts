@@ -10,18 +10,21 @@ import {
   Transaction,
   Amount,
   AmountUnit,
+  Builder,
   RPC as ToolKitRpc,
+  Reader,
 } from '@lay2/pw-core'
+import { core } from '@ckb-lumos/base'
 import RPC from '@nervosnetwork/ckb-sdk-rpc'
 import { CKB_NODE_URL } from '../../constants'
 
 export const toolkitRPC = new ToolKitRpc(CKB_NODE_URL)
 
-// interface UnipassWitnessArgs {
-//   lock: string
-//   input_type: string
-//   output_type: string
-// }
+interface UnipassWitnessArgs {
+  lock: string
+  input_type: string
+  output_type: string
+}
 
 // function getUnipassWitnessArgs(inputType: string): UnipassWitnessArgs {
 //   return {
@@ -30,6 +33,29 @@ export const toolkitRPC = new ToolKitRpc(CKB_NODE_URL)
 //     output_type: '',
 //   }
 // }
+
+export const addWitnessArgType = (
+  wa: typeof Builder.WITNESS_ARGS.RawSecp256k1,
+  witness: string
+): UnipassWitnessArgs => {
+  const witnessArg = {
+    ...wa,
+  }
+  const oldWitnessArg = new core.WitnessArgs(new Reader(witness))
+  const inputType = oldWitnessArg.getInputType()
+  const outputType = oldWitnessArg.getOutputType()
+  if (inputType.hasValue()) {
+    witnessArg.input_type = new Reader(
+      inputType.value().raw()
+    ).serializeJson()
+  }
+  if (outputType.hasValue()) {
+    witnessArg.output_type = new Reader(
+      outputType.value().raw()
+    ).serializeJson()
+  }
+  return witnessArg
+}
 
 export default async function rawTransactionToPWTransaction(
   rawTx: RPC.RawTransaction

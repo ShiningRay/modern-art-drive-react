@@ -32,7 +32,9 @@ const Header: React.FC = ({ children }) => {
       {recentFix.length > 0 && (
         <Marquee className="fixed-marquee">
           {recentFix.map((fix) => (
-            <span>{`#${fix.tid} Fixed: ${fix.sentence.en}; ${fix.sentence.zh}`}</span>
+            <span
+              key={fix.tid}
+            >{`#${fix.tid} Fixed: ${fix.sentence.en}; ${fix.sentence.zh}`}</span>
           ))}
         </Marquee>
       )}

@@ -1,5 +1,7 @@
 import React, { ReactElement, useEffect, useMemo, useState } from 'react'
+import { sleep } from '../../utils'
 import CommonPageTitle from '../../components/CommonPageTitle'
+import rawTransactionToPWTransaction from '../../store/unipass/toPwTransaction'
 import Unipass from '../../store/unipass'
 import classnames from 'classnames'
 import Slider from 'react-slick'
@@ -437,10 +439,11 @@ export const Home: React.FC = () => {
   const [nfts, setNfts] = useState<NftData[]>([])
   const [data, setData] = useState<NftData | null>(null)
   const [currentShowData, setCurrentShowData] = useState<NftData | null>(null)
-  const { address, sign, signTx } = Unipass.useContainer()
+  const { address, signUnipass } = Unipass.useContainer()
   const { alertMessage } = System.useContainer()
   const [isMobile] = useDetectMobile()
   const location = useLocation()
+  const { showAlertModal } = System.useContainer()
 
   const fixedNfts = useMemo(
     () => nfts.filter((nft) => nft.fixed && nft.exercised),
@@ -451,19 +454,19 @@ export const Home: React.FC = () => {
     [nfts, fixedNfts]
   )
 
+  const initNfts = async (addr: string): Promise<void> => {
+    return await serverWalletAPI.getNfts(addr).then((nfts) => {
+      setNfts(nfts)
+    })
+  }
+
   useEffect(() => {
     if (!address) {
       setNfts([])
       setData(null)
       return
     }
-    serverWalletAPI
-      // .getNfts(
-      //   'ckt1qqfy5cxd0x0pl09xvsvkmert8alsajm38qfnmjh2fzfu2804kq47vqfhs5m4f8d60hfuajnx3znz9egtd9yjh5qrw3yee'
-      // )
-      .getNfts(address)
-      .then(setNfts)
-      .catch((e) => console.log(e))
+    initNfts(address).catch((e) => console.log(e))
   }, [address])
 
   useEffect(() => {
@@ -507,7 +510,7 @@ export const Home: React.FC = () => {
       alertMessage(
         error.response.data.message
           .split('\n')
-          .map((line: string) => <div>{line}</div>),
+          .map((line: string) => <div key={line}>{line}</div>),
         {
           okButton: true,
           type: 'error',
@@ -519,24 +522,44 @@ export const Home: React.FC = () => {
   const handleFixOk = async (): Promise<void> => {
     if (!data) return
     setSubmitting(true)
+
     try {
-      const raw = await serverWalletAPI.getFixGen(
-        data.class.rarity,
-        data.tid.toString()
+      const raw = await serverWalletAPI
+        .getFixGen(data.class.rarity, data.tid.toString())
+        .finally(() => {
+          setSubmitting(false)
+          showFixModal(false)
+        })
+      const tx = await signUnipass(await rawTransactionToPWTransaction(raw))
+
+      alertMessage(
+        <>
+          <div>正在固定你的驱动器</div>
+          <div>Fixing your driver...</div>
+        </>
       )
-      const signedMessage = await signTx(raw)
-      console.log('签名Object：')
-      console.log(raw)
-      console.log('签名结果：')
-      console.log(signedMessage)
-      sign(signedMessage, 'fix', [
-        data.class.rarity,
-        data.tid.toString(),
-      ]).catch((e) => console.log(e))
+      // setText('Fixing your nft...')
+      serverWalletAPI
+        .fixNft(data.class.rarity, data.tid.toString(), tx.transform())
+        .then(() => {
+          alertMessage(
+            <>
+              <div>固定成功，稍后片刻</div>
+              <div>Fix success, update at 3s.</div>
+            </>
+          )
+        })
+        .then(async () => {
+          await sleep(3000)
+          if (address) {
+            initNfts(address).catch((e) => console.log(e))
+          }
+        })
+        .finally(() => {
+          showAlertModal(false)
+        })
     } catch (error) {
       handleGenError(error)
-      setSubmitting(false)
-      showFixModal(false)
     }
   }
 
@@ -544,23 +567,50 @@ export const Home: React.FC = () => {
     if (!data) return
     setSubmitting(true)
     try {
-      const raw = await serverWalletAPI.getRefreshGen(
-        data.class.rarity,
-        data.tid.toString()
+      const raw = await serverWalletAPI
+        .getRefreshGen(data.class.rarity, data.tid.toString())
+        .finally(() => {
+          setSubmitting(false)
+          showRefreshModal(false)
+        })
+
+      console.log('[handleRefreshOk.raw]', raw)
+      const tx = await signUnipass(await rawTransactionToPWTransaction(raw))
+
+      alertMessage(
+        <>
+          <div>正在刷新你的驱动器</div>
+          <div>Refreshing your driver...</div>
+        </>,
+        {
+          type: 'loading',
+        }
       )
-      const signedMessage = await signTx(raw)
-      console.log('签名Object：')
-      console.log(raw)
-      console.log('签名结果：')
-      console.log(signedMessage)
-      sign(signedMessage, 'refresh', [
-        data.class.rarity,
-        data.tid.toString(),
-      ]).catch((e) => console.log(e))
-    } catch (error: any) {
+
+      serverWalletAPI
+        .refreshNft(data.class.rarity, data.tid.toString(), tx.transform())
+        .then(() => {
+          alertMessage(
+            <>
+              <div>刷新成功，稍后片刻</div>
+              <div>Refresh success, update at 3s.</div>
+            </>,
+            {
+              type: 'loading',
+            }
+          )
+        })
+        .then(async () => {
+          await sleep(3000)
+          if (address) {
+            initNfts(address).catch((e) => console.log(e))
+          }
+        })
+        .finally(() => {
+          showAlertModal(false)
+        })
+    } catch (error) {
       handleGenError(error)
-      setSubmitting(false)
-      showRefreshModal(false)
     }
   }
 
@@ -568,25 +618,50 @@ export const Home: React.FC = () => {
     if (!data) return
     setSubmitting(true)
     try {
-      const raw = await serverWalletAPI.getAddWordsGen(
-        data.class.rarity,
-        data.tid.toString(),
-        words
+      const raw = await serverWalletAPI
+        .getAddWordsGen(data.class.rarity, data.tid.toString(), words)
+        .finally(() => {
+          setSubmitting(false)
+          showAddWordModal(false)
+        })
+
+      console.log('[rawTx]', raw)
+      const tx = await signUnipass(await rawTransactionToPWTransaction(raw))
+
+      alertMessage(
+        <>
+          <div>正在添加你的词条</div>
+          <div>Adding your words...</div>
+        </>,
+        {
+          type: 'loading',
+        }
       )
-      const signedMessage = await signTx(raw)
-      console.log('签名Object：')
-      console.log(raw)
-      console.log('签名结果：')
-      console.log(signedMessage)
-      sign(signedMessage, 'addwords', [
-        data.class.rarity,
-        data.tid.toString(),
-        words,
-      ]).catch((e) => console.log(e))
+
+      serverWalletAPI
+        .addWords(data.class.rarity, data.tid, words, tx.transform())
+        .then(() => {
+          alertMessage(
+            <>
+              <div>添加成功，稍等片刻</div>
+              <div>Add words success, update at 3s.</div>
+            </>,
+            {
+              type: 'loading',
+            }
+          )
+        })
+        .then(async () => {
+          await sleep(3000)
+          if (address) {
+            initNfts(address).catch((e) => console.log(e))
+          }
+        })
+        .finally(() => {
+          showAlertModal(false)
+        })
     } catch (error) {
       handleGenError(error)
-      setSubmitting(false)
-      showAddWordModal(false)
     }
   }
 
