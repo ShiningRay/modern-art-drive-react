@@ -559,6 +559,7 @@ export const Home: React.FC = () => {
           showAlertModal(false)
         })
     } catch (error) {
+      console.log(error)
       handleGenError(error)
     }
   }
@@ -610,6 +611,7 @@ export const Home: React.FC = () => {
           showAlertModal(false)
         })
     } catch (error) {
+      console.log(error)
       handleGenError(error)
     }
   }
@@ -661,6 +663,7 @@ export const Home: React.FC = () => {
           showAlertModal(false)
         })
     } catch (error) {
+      console.log(error)
       handleGenError(error)
     }
   }
