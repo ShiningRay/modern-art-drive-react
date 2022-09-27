@@ -21,7 +21,9 @@ import {
 } from '@ant-design/icons'
 import okImg from '../../assets/img/btn-ok.svg'
 import cancelImg from '../../assets/img/btn-cancel.svg'
-import usImg from '../../assets/img/us.jpg'
+import twiiterImg from '../../assets/img/twitter.png'
+import wechatImg from '../../assets/img/wechat.jpeg'
+import wechatPublicAccountImg from '../../assets/img/wechat_public_account.jpeg'
 import { useLocation } from 'react-router'
 import qs from 'qs'
 import System from '../../store/system'
@@ -763,8 +765,10 @@ export const Home: React.FC = () => {
                 <button className="page-title-button">作品阐释</button>
               </a>
             </div>
-            <div>
-              <img src={usImg} alt="" />
+            <div className="qrcode-stack">
+              <img src={twiiterImg} alt="" />
+              <img src={wechatImg} alt="" />
+              <img src={wechatPublicAccountImg} alt="" />
             </div>
             <div>联系我们</div>
           </div>
